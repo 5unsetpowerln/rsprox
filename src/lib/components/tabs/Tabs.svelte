@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { TabObject } from "../../types";
+    // import type { TabObject } from "../../types";
     import Icon from "@iconify/svelte";
     import "./tabs.css";
 

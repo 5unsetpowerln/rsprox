@@ -1,11 +1,11 @@
-<script lang="ts">
+<!-- <script lang="ts">
     import "./pilot.css";
     import { get, writable, type Writable } from "svelte/store";
-    import Button from "../../components/button/button.svelte";
-    import Switch from "../../components/switch/switch.svelte";
-    import { pilot_exchange_list, pilot_state } from "../proxy";
-    import AnExchangeEditor from "../../components/anExchangeEditor/anExchangeEditor.svelte";
-    import { to_request } from "../../exchange";
+    // import Button from "../../components/button/button.svelte";
+    // import Switch from "../../components/switch/switch.svelte";
+    // import { pilot_exchange_list, pilot_state } from "../proxy";
+    // import AnExchangeEditor from "../../components/anExchangeEditor/anExchangeEditor.svelte";
+    // import { to_request } from "../../exchange";
 
     let current_content: Writable<string> = writable("");
     pilot_exchange_list.subscribe(() => {
@@ -27,4 +27,4 @@
         </div>
     </div>
     <AnExchangeEditor content={current_content} />
-</div>
+</div> -->

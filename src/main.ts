@@ -1,6 +1,7 @@
 import "./scss/styles.css";
 import App from "./App.svelte";
-import { proxy_start } from "./lib/proxy/proxy";
+// import { proxy_start } from "./features/proxy/proxy";
+import { proxy_start } from "./lib/proxy";
 
 proxy_start();
 

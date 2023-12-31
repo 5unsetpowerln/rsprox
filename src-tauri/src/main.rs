@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-mod http_util;
+// mod http_util;
 mod proxy;
 
 use proxy::run_proxy_server;
@@ -22,17 +22,17 @@ async fn main() {
                 run_proxy_server(pilot_state_alt, proxy_app_handle).await;
             });
 
-            app.listen_global("pilot-state", move |event| {
-                let mut pilot_state = pilot_state.lock().unwrap();
-                let pilot_state_str = event.payload().unwrap();
-                if pilot_state_str == "true" {
-                    *pilot_state = true;
-                } else if pilot_state_str == "false" {
-                    *pilot_state = false;
-                } else {
-                    println!("invalid pilot state: {}", pilot_state_str);
-                }
-            });
+            // app.listen_global("pilot-state", move |event| {
+            //     let mut pilot_state = pilot_state.lock().unwrap();
+            //     let pilot_state_str = event.payload().unwrap();
+            //     if pilot_state_str == "true" {
+            //         *pilot_state = true;
+            //     } else if pilot_state_str == "false" {
+            //         *pilot_state = false;
+            //     } else {
+            //         println!("invalid pilot state: {}", pilot_state_str);
+            //     }
+            // });
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![])
@@ -41,4 +41,3 @@ async fn main() {
 }
 
 // openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem
-
