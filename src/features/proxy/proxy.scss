@@ -1,9 +1,0 @@
-@use "../../scss/rule";
-@use "../../scss/theme";
-
-$tab-height: rule.$unit-size-small-3;
-
-.proxy {
-    display: grid;
-    grid-template-rows: $tab-height calc(100% - $tab-height);
-}

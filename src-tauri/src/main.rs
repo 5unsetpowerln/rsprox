@@ -10,6 +10,7 @@ use tauri::Manager;
 
 #[tokio::main]
 async fn main() {
+    std::env::set_var("WEBKIT_DISABLE_COMPOSITING_MODE", "1");
     // ** shared state for proxy
     tauri::Builder::default()
         .setup(|app| {

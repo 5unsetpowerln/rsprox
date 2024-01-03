@@ -9,7 +9,7 @@ use std::{convert::Infallible, io::Read, net::SocketAddr};
 use tauri::{AppHandle, Manager};
 
 pub async fn run_proxy_server(is_intercepted: Arc<Mutex<bool>>, app_handle: AppHandle) {
-    let request_response_pair_id = Arc::new(Mutex::new(0 as usize));
+    let request_response_pair_id = Arc::new(Mutex::new(1 as usize));
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
     let make_service = hyper::service::make_service_fn(move |_conn| {
         let app_handle_ = app_handle.clone();

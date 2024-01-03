@@ -12,9 +12,41 @@ use super::encode::Encoding;
 use super::headers::{HeaderMapUtil, VersionUtil};
 
 #[derive(Serialize, Deserialize, Clone)]
+pub struct Header {
+    // id for table in frontend
+    id: usize,
+    name: String,
+    value_raw: Vec<u8>,
+    value: String,
+}
+
+impl Header {
+    #[inline]
+    pub fn new(id: usize, name: &str, value: &str, value_raw: &[u8]) -> Self {
+        Self {
+            id,
+            name: name.to_string(),
+            value: value.to_string(),
+            value_raw: value_raw.to_vec(),
+        }
+    }
+
+    #[inline]
+    pub fn name(&self) -> String {
+        self.name.clone()
+    }
+
+    #[inline]
+    pub fn value_raw(&self) -> Vec<u8> {
+        self.value_raw.clone()
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone)]
 pub struct RequestForFrontend {
     pub id: usize,
-    pub headers: HashMap<String, String>,
+    // pub headers: HashMap<String, String>,
+    pub headers: Vec<Header>,
     pub uri: String,
     pub method: String,
     pub version: String,
@@ -25,8 +57,11 @@ impl RequestForFrontend {
     pub async fn from_hyper(request: Request<Body>, id: usize) -> Result<Self> {
         let (parts, body) = request.into_parts();
 
-        // let headers_json = parts.headers.to_json().unwrap();
-        let headers_hashmap = parts.headers.to_hashmap().unwrap();
+        let headers_vec = parts
+            .headers
+            .to_header_vector()
+            .context("Failed to create a vector from the headers")?;
+
         let uri_string = parts.uri.to_string();
         let method_string = parts.method.to_string();
         let version_string = parts.version.to_string().unwrap();
@@ -40,7 +75,7 @@ impl RequestForFrontend {
 
         Ok(Self {
             id,
-            headers: headers_hashmap,
+            headers: headers_vec,
             uri: uri_string,
             method: method_string,
             version: version_string,
@@ -49,7 +84,7 @@ impl RequestForFrontend {
     }
 
     pub async fn to_hyper(self) -> Result<Request<Body>> {
-        let headers = HeaderMap::from_hashmap(self.headers).unwrap();
+        let headers = HeaderMap::from_header_vector(self.headers).unwrap();
         let uri = self.uri.parse::<Uri>().unwrap();
         let method = Method::from_str(&self.method).unwrap();
         let version = Version::from_str(&self.version).unwrap();
