@@ -7,7 +7,7 @@
 	<Tab label="proxy" />
 	<Tab label="repeater" />
 	<svelte:fragment slot="content">
-		<TabContent style="height: 100%;"><Proxy /></TabContent>
-		<TabContent style="height: 100%;">Content 2</TabContent>
+		<TabContent style="height: 100%; padding: 0px;"><Proxy /></TabContent>
+		<TabContent style="height: 100%; padding: 0px;">Content 2</TabContent>
 	</svelte:fragment>
 </Tabs>

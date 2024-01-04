@@ -6,6 +6,7 @@ $splitter_color: gray;
 	}
 	.splitpanes__splitter {
 		background-color: $splitter_color;
+		/* background-color: rgba(0, 0, 0, 0); */
 		box-sizing: border-box;
 		position: relative;
 		flex-shrink: 0;

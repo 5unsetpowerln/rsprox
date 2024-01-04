@@ -14,50 +14,59 @@ use crate::proxy::{
 use super::{
     body::{decode_body, encode_body},
     encode::Encoding,
+    headers::Header,
+    util::bytes_to_string,
 };
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct ResponseForFrontend {
     id: usize,
-    headers: HashMap<String, String>,
+    // headers: HashMap<String, String>,
+    headers: Vec<Header>,
     status: u16,
     version: String,
-    body: Vec<u8>,
+    body: String,
+    body_raw: Vec<u8>,
 }
 
 impl ResponseForFrontend {
     pub async fn from_hyper(response: Response<Body>, id: usize) -> Result<Self> {
         let (parts, body) = response.into_parts();
 
-        let headers_hashmap = parts.headers.to_hashmap().unwrap();
+        let headers = parts
+            .headers
+            .to_header_vector()
+            .context("Failed to create a vector from the headers")?;
         let status_string = parts.status.as_u16();
         let version_string = parts.version.to_string().unwrap();
 
         let encoding_header = parts.headers.get(CONTENT_ENCODING);
         let used_encoding =
             Encoding::from(encoding_header).context("Failed to determine the encoding type")?;
-        let decoded_body = decode_body(body, used_encoding)
+        let decoded_body_raw = decode_body(body, used_encoding)
             .await
             .context("Failed to decode a body")?;
+        let decoded_body = bytes_to_string(&decoded_body_raw).await;
 
         Ok(Self {
             id,
-            headers: headers_hashmap,
+            headers,
             status: status_string,
+            body_raw: decoded_body_raw,
             body: decoded_body,
             version: version_string,
         })
     }
 
     pub fn to_hyper(self) -> Result<Response<Body>> {
-        let headers = HeaderMap::from_hashmap(self.headers).unwrap();
+        let headers = HeaderMap::from_header_vector(self.headers).unwrap();
         let status = StatusCode::from_u16(self.status).unwrap();
 
         let encoding_header = headers.get(CONTENT_ENCODING);
         let used_encoding =
             Encoding::from(encoding_header).context("Failed to determine the encoding type")?;
         let encoded_body =
-            encode_body(&self.body, used_encoding).context("Failed to encode a body")?;
+            encode_body(&self.body_raw, used_encoding).context("Failed to encode a body")?;
 
         let version = Version::from_str(&self.version).unwrap();
 

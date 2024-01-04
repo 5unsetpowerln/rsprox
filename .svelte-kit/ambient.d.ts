@@ -40,9 +40,11 @@ declare module '$env/static/private' {
 	export const WLR_NO_HARDWARE_CURSORS: string;
 	export const GTK_IM_MODULE: string;
 	export const NODE: string;
+	export const WEZTERM_CONFIG_DIR: string;
 	export const DOT_BASE: string;
 	export const COLOR: string;
 	export const npm_config_local_prefix: string;
+	export const WEZTERM_EXECUTABLE: string;
 	export const XMODIFIERS: string;
 	export const DESKTOP_SESSION: string;
 	export const npm_config_globalconfig: string;
@@ -64,6 +66,7 @@ declare module '$env/static/private' {
 	export const MOTD_SHOWN: string;
 	export const HOME: string;
 	export const LANG: string;
+	export const WEZTERM_UNIX_SOCKET: string;
 	export const _JAVA_AWT_WM_NONREPARENTING: string;
 	export const LS_COLORS: string;
 	export const npm_package_version: string;
@@ -94,6 +97,7 @@ declare module '$env/static/private' {
 	export const npm_config_user_agent: string;
 	export const npm_execpath: string;
 	export const LD_LIBRARY_PATH: string;
+	export const WEZTERM_CONFIG_FILE: string;
 	export const XDG_RUNTIME_DIR: string;
 	export const PYENV_ROOT: string;
 	export const NVCC_CCBIN: string;
@@ -116,7 +120,9 @@ declare module '$env/static/private' {
 	export const ZED_TERM: string;
 	export const npm_node_execpath: string;
 	export const npm_config_engine_strict: string;
+	export const WEZTERM_PANE: string;
 	export const TERM_PROGRAM: string;
+	export const WEZTERM_EXECUTABLE_DIR: string;
 	export const NODE_ENV: string;
 }
 
@@ -163,9 +169,11 @@ declare module '$env/dynamic/private' {
 		WLR_NO_HARDWARE_CURSORS: string;
 		GTK_IM_MODULE: string;
 		NODE: string;
+		WEZTERM_CONFIG_DIR: string;
 		DOT_BASE: string;
 		COLOR: string;
 		npm_config_local_prefix: string;
+		WEZTERM_EXECUTABLE: string;
 		XMODIFIERS: string;
 		DESKTOP_SESSION: string;
 		npm_config_globalconfig: string;
@@ -187,6 +195,7 @@ declare module '$env/dynamic/private' {
 		MOTD_SHOWN: string;
 		HOME: string;
 		LANG: string;
+		WEZTERM_UNIX_SOCKET: string;
 		_JAVA_AWT_WM_NONREPARENTING: string;
 		LS_COLORS: string;
 		npm_package_version: string;
@@ -217,6 +226,7 @@ declare module '$env/dynamic/private' {
 		npm_config_user_agent: string;
 		npm_execpath: string;
 		LD_LIBRARY_PATH: string;
+		WEZTERM_CONFIG_FILE: string;
 		XDG_RUNTIME_DIR: string;
 		PYENV_ROOT: string;
 		NVCC_CCBIN: string;
@@ -239,7 +249,9 @@ declare module '$env/dynamic/private' {
 		ZED_TERM: string;
 		npm_node_execpath: string;
 		npm_config_engine_strict: string;
+		WEZTERM_PANE: string;
 		TERM_PROGRAM: string;
+		WEZTERM_EXECUTABLE_DIR: string;
 		NODE_ENV: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;

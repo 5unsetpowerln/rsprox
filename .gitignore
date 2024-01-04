@@ -11,8 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
-
+build
+build/
 # Editor directories and files
+.zed/*
 .vscode/*
 !.vscode/extensions.json
 .idea

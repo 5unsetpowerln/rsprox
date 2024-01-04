@@ -2,8 +2,38 @@ use std::{collections::HashMap, str::FromStr};
 
 use anyhow::{anyhow, Context, Result};
 use http::{HeaderMap, HeaderName, HeaderValue, Version};
+use serde::{Deserialize, Serialize};
 
-use super::request::Header;
+#[derive(Serialize, Deserialize, Clone)]
+pub struct Header {
+    // id for table in frontend
+    id: usize,
+    name: String,
+    value_raw: Vec<u8>,
+    value: String,
+}
+
+impl Header {
+    #[inline]
+    pub fn new(id: usize, name: &str, value: &str, value_raw: &[u8]) -> Self {
+        Self {
+            id,
+            name: name.to_string(),
+            value: value.to_string(),
+            value_raw: value_raw.to_vec(),
+        }
+    }
+
+    #[inline]
+    pub fn name(&self) -> String {
+        self.name.clone()
+    }
+
+    #[inline]
+    pub fn value_raw(&self) -> Vec<u8> {
+        self.value_raw.clone()
+    }
+}
 
 pub trait HeaderMapUtil {
     fn to_hashmap(&self) -> Result<HashMap<String, String>>;

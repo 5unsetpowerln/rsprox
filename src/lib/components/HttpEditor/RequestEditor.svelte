@@ -8,38 +8,37 @@
 		SelectItem,
 		SelectSkeleton,
 		Tag,
+		TextArea,
 		TextInput
 	} from 'carbon-components-svelte';
 	import HeaderEditor from './HeaderEditor.svelte';
+	import BodyEditor from './BodyEditor.svelte';
 
 	export let request: Request;
 	export let readonly: boolean = false;
 
-	let headers = request?.get_headers();
-	let version = request?.get_version();
-	let method = request?.get_method();
-	let uri = request?.get_uri();
+	let headers = request.get_headers();
+	let version = request.get_version();
+	let method = request.get_method();
+	let uri = request.get_uri();
+	let body = request.get_body();
 </script>
 
-<Grid fullWidth noGutter>
-	<Column noGutter>
-		{#if request !== undefined}
-			<Row noGutter>
-				<!-- <Column sm={2} md={1} lg={7}> -->
-				<TextInput readonly hideLabel value={version} />
-				<!-- </Column> -->
-				<!-- <Column sm={2} md={1} lg={8}> -->
-				<Select hideLabel labelText="Carbon theme" style="width: 50%;">
-					<SelectItem value={method} />
-				</Select>
-				<!-- </Column> -->
-			</Row>
-			<Row noGutter>
-				<TextInput hideLabel value={uri} />
-			</Row>
-		{:else}
-			// <SelectSkeleton hideLabel />
-		{/if}
-	</Column>
-</Grid>
-<HeaderEditor {headers} />
+{#if request !== undefined}
+	<div class="top">
+		<TextInput readonly hideLabel size="sm" value={version} />
+		<Select hideLabel labelText="Carbon theme" size="sm">
+			<SelectItem value={method} />
+		</Select>
+	</div>
+	<TextInput hideLabel value={uri} size="sm" />
+	<HeaderEditor {headers} />
+	<BodyEditor {body} />
+{/if}
+
+<style lang="scss">
+	.top {
+		display: grid;
+		grid-template-columns: 200px calc(100% - 200px);
+	}
+</style>

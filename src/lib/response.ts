@@ -1,23 +1,27 @@
+import { Body } from './body';
+import { type Header } from './header';
+
 export interface ResponseFromBackend {
 	id: number;
-	headers: Map<string, string>;
+	headers: Header[];
 	status: number;
 	version: string;
-	body: Uint8Array;
+	body: string;
+	body_raw: Uint8Array;
 }
 
 export class Response {
 	private id: number;
-	private headers: Map<string, string>;
+	private headers: Header[];
 	private status: number;
 	private version: string;
-	private body: Uint8Array;
+	private body: Body;
 
 	constructor(response_from_backend: ResponseFromBackend) {
 		this.id = response_from_backend.id;
 		this.headers = response_from_backend.headers;
 		this.status = response_from_backend.status;
-		this.body = response_from_backend.body;
+		this.body = new Body(response_from_backend.body, response_from_backend.body_raw);
 		this.version = response_from_backend.version;
 	}
 
@@ -37,7 +41,7 @@ export class Response {
 		return this.version;
 	}
 
-	public get_body() {
+	public get_body(): Body {
 		return this.body;
 	}
 }

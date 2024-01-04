@@ -1,3 +1,4 @@
+import { Body } from './body';
 import type { Header } from './header';
 
 export interface RequestFromBackend {
@@ -7,7 +8,8 @@ export interface RequestFromBackend {
 	uri: string;
 	method: string;
 	version: string;
-	body: Uint8Array;
+	body: string;
+	body_raw: Uint8Array;
 }
 
 export class Request {
@@ -17,7 +19,8 @@ export class Request {
 	private uri: string;
 	private method: string;
 	private version: string;
-	private body: Uint8Array;
+	private body: Body;
+	// private body_raw: Uint8Array;
 
 	constructor(request_from_backend: RequestFromBackend) {
 		this.id = request_from_backend.id;
@@ -25,7 +28,7 @@ export class Request {
 		this.headers = request_from_backend.headers;
 		this.method = request_from_backend.method;
 		this.version = request_from_backend.version;
-		this.body = request_from_backend.body;
+		this.body = new Body(request_from_backend.body, request_from_backend.body_raw);
 	}
 
 	public get_id(): number {
@@ -48,7 +51,7 @@ export class Request {
 		return this.version;
 	}
 
-	public get_body(): Uint8Array {
+	public get_body(): Body {
 		return this.body;
 	}
 }

@@ -1,6 +1,5 @@
 use anyhow::Context;
 use anyhow::{anyhow, Result};
-use bytes::Bytes;
 use flate2::read::DeflateDecoder;
 use flate2::read::DeflateEncoder;
 use flate2::read::GzDecoder;
@@ -68,7 +67,7 @@ impl Encoding {
                 let mut buffer = Vec::new();
                 deflate_encoder
                     .read_to_end(&mut buffer)
-                    .context("Failed to encode a data");
+                    .context("Failed to encode a data")?;
                 Ok(buffer)
             }
             Self::Identity => Ok(encoded_data.to_vec()),

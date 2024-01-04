@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { Splitpanes, Pane } from '$lib/components/Splitpanes';
 	import type { RequestResponsePair } from '$lib/proxy';
+	import { Grid, Tile } from 'carbon-components-svelte';
 	import RequestEditor from './RequestEditor.svelte';
+	import ResponseEditor from './ResponseEditor.svelte';
 
 	export let readonly: boolean = false;
-	export let value: RequestResponsePair;
+	export let pair: RequestResponsePair;
 
-	let request = value?.request;
+	let request = pair?.request;
+	let response = pair?.response;
 </script>
 
 <div class="HttpEditor">
@@ -19,9 +22,11 @@
 			{/key}
 		</Pane>
 		<Pane size={50}>
-			<!-- {#if value.response !== undefined} -->
-			<!-- <ResponseEditor {readonly} {response} /> -->
-			<!-- {/if} -->
+			{#if response !== undefined}
+				<div class="response">
+					<ResponseEditor {readonly} {response} />
+				</div>
+			{/if}
 		</Pane>
 	</Splitpanes>
 </div>
@@ -30,5 +35,11 @@
 	.HttpEditor {
 		height: 90%;
 		overflow: scroll;
+
+		.response {
+			overflow: scroll;
+			// width: 100%;
+			// margin: 50px;
+		}
 	}
 </style>

@@ -50,7 +50,7 @@
 		</Pane>
 		<Pane size={50}>
 			{#key $selected_pair}
-				<HttpEditor readonly value={$selected_pair} />
+				<HttpEditor readonly pair={$selected_pair} />
 			{/key}
 		</Pane>
 	</Splitpanes>

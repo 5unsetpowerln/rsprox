@@ -9,48 +9,19 @@ use crate::proxy::body::clone_body;
 
 use super::body::{decode_body, encode_body};
 use super::encode::Encoding;
-use super::headers::{HeaderMapUtil, VersionUtil};
-
-#[derive(Serialize, Deserialize, Clone)]
-pub struct Header {
-    // id for table in frontend
-    id: usize,
-    name: String,
-    value_raw: Vec<u8>,
-    value: String,
-}
-
-impl Header {
-    #[inline]
-    pub fn new(id: usize, name: &str, value: &str, value_raw: &[u8]) -> Self {
-        Self {
-            id,
-            name: name.to_string(),
-            value: value.to_string(),
-            value_raw: value_raw.to_vec(),
-        }
-    }
-
-    #[inline]
-    pub fn name(&self) -> String {
-        self.name.clone()
-    }
-
-    #[inline]
-    pub fn value_raw(&self) -> Vec<u8> {
-        self.value_raw.clone()
-    }
-}
+use super::headers::{Header, HeaderMapUtil, VersionUtil};
+use super::util::bytes_to_string;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct RequestForFrontend {
-    pub id: usize,
+    id: usize,
     // pub headers: HashMap<String, String>,
-    pub headers: Vec<Header>,
-    pub uri: String,
-    pub method: String,
-    pub version: String,
-    pub body: Vec<u8>,
+    headers: Vec<Header>,
+    uri: String,
+    method: String,
+    version: String,
+    body: String,
+    body_raw: Vec<u8>,
 }
 
 impl RequestForFrontend {
@@ -69,9 +40,10 @@ impl RequestForFrontend {
         let encoding_header = parts.headers.get(CONTENT_ENCODING);
         let used_encoding =
             Encoding::from(encoding_header).context("Failed to determine the encoding type")?;
-        let decoded_body = decode_body(body, used_encoding)
+        let decoded_body_raw = decode_body(body, used_encoding)
             .await
             .context("Failed to decode a body")?;
+        let decoded_body = bytes_to_string(&decoded_body_raw).await;
 
         Ok(Self {
             id,
@@ -80,6 +52,7 @@ impl RequestForFrontend {
             method: method_string,
             version: version_string,
             body: decoded_body,
+            body_raw: decoded_body_raw,
         })
     }
 
@@ -92,8 +65,8 @@ impl RequestForFrontend {
         let encoding_header = headers.get(CONTENT_ENCODING);
         let used_encoding =
             Encoding::from(encoding_header).context("Failed to determine the encoding type")?;
-        let encoded_body =
-            encode_body(&self.body, used_encoding).context("Failed to encode a body")?;
+        let encoded_body_raw =
+            encode_body(&self.body_raw, used_encoding).context("Failed to encode a body")?;
 
         let mut request_builder = hyper::Request::builder();
         for (name, value) in headers {
@@ -103,7 +76,7 @@ impl RequestForFrontend {
             .uri(uri)
             .method(method)
             .version(version)
-            .body(encoded_body)
+            .body(encoded_body_raw)
             .unwrap();
 
         Ok(request)

@@ -8,7 +8,7 @@
 	<Tab label="history" />
 	<Tab label="intercept" />
 	<svelte:fragment slot="content">
-		<TabContent style="height: 100%;"><History /></TabContent>
-		<TabContent style="height: 100%;"><Intercept /></TabContent>
+		<TabContent style="height: 100%;padding: 0px;"><History /></TabContent>
+		<TabContent style="height: 100%;padding: 0px;"><Intercept /></TabContent>
 	</svelte:fragment>
 </Tabs>
