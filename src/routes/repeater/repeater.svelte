@@ -1,9 +1,11 @@
-<script>
+<script lang="ts">
+	import Tabs from '$lib/components/Tabs/Tabs.svelte';
 	import { requests_in_repeater } from '$lib/repeater';
 
 	let requests = requests_in_repeater.get_requests();
 </script>
 
 {#key $requests}
-	{$requests.length}
+	<Tabs components={requests_in_repeater.get_components()} />
+	<!-- <svelte:component /> -->
 {/key}

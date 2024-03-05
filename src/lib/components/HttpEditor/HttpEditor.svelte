@@ -1,12 +1,7 @@
 <script lang="ts">
 	import { Splitpanes, Pane } from '$lib/components/Splitpanes';
 	import type { RequestResponsePair } from '$lib/request';
-	import {
-		ContextMenu,
-		ContextMenuDivider,
-		ContextMenuGroup,
-		ContextMenuOption
-	} from 'carbon-components-svelte';
+	import { ContextMenu, ContextMenuOption } from 'carbon-components-svelte';
 	import RequestEditor from './RequestEditor.svelte';
 	import ResponseEditor from './ResponseEditor.svelte';
 	import type { Response } from '$lib/response';
