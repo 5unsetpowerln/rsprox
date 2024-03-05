@@ -68,7 +68,7 @@
       "_proxy.js"
     ],
     "css": [
-      "_app/immutable/assets/_layout.Bb0fIV63.css"
+      "_app/immutable/assets/_layout.zW4toGWC.css"
     ]
   },
   "src/routes/+layout.ts": {
@@ -88,7 +88,7 @@
       "_proxy.js"
     ],
     "css": [
-      "_app/immutable/assets/_page.D7CWAbFO.css"
+      "_app/immutable/assets/_page.BhiKI1nF.css"
     ]
   }
 }

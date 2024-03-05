@@ -1,16 +1,9 @@
 <script lang="ts">
 	import type { Response } from '$lib/response';
-	import {
-		Column,
-		Grid,
-		Row,
-		Select,
-		SelectItem,
-		SelectSkeleton,
-		TextInput
-	} from 'carbon-components-svelte';
+	import { ComboBox, Select, SelectItem, TextInput } from 'carbon-components-svelte';
 	import HeaderEditor from './HeaderEditor.svelte';
 	import BodyEditor from './BodyEditor.svelte';
+	import { charset_options } from '$lib/body';
 
 	export let response: Response;
 	export let readonly: boolean = false;
@@ -19,24 +12,31 @@
 	let status = response.get_status();
 	let version = response.get_version();
 	let body = response.get_body();
+	let content_extension = headers.content_extension();
+	let selected_charset_id = '0';
 </script>
 
 {#if response !== undefined}
 	<div class="top">
 		<TextInput readonly hideLabel size="sm" value={version} />
-		<Select hideLabel labelText="Carbon theme" size="sm" style="">
-			<SelectItem value={status} />
-		</Select>
+
+		<ComboBox size="sm" selectedId="0" items={[{ id: '0', text: status.toString() }]} />
+		<ComboBox size="sm" bind:selectedId={selected_charset_id} items={charset_options} />
 	</div>
-	<!-- <SelectSkeleton hideLabel /> -->
+	<HeaderEditor {headers} />
+	{#key selected_charset_id}
+		<BodyEditor
+			{body}
+			{content_extension}
+			{readonly}
+			charset={charset_options.find((entry) => entry.id === selected_charset_id)?.text}
+		/>
+	{/key}
 {/if}
-<!-- </Grid> -->
-<HeaderEditor {headers} />
-<BodyEditor {body} />
 
 <style lang="scss">
 	.top {
 		display: grid;
-		grid-template-columns: 200px calc(100% - 200px);
+		grid-template-columns: 33% 33% 34%;
 	}
 </style>

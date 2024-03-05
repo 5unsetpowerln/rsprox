@@ -1,34 +1,31 @@
-import { Body } from './body';
-import type { Header } from './header';
+import { Body, type BodyFromBackend } from './body';
+import { type Header, Headers } from './header';
+import type { Response } from './response';
 
 export interface RequestFromBackend {
 	id: number;
-	// headers: Map<string, string>;
-	headers: Header[];
+	headers: Array<Header>;
 	uri: string;
 	method: string;
 	version: string;
-	body: string;
-	body_raw: Uint8Array;
+	body: BodyFromBackend;
 }
 
 export class Request {
 	private id: number;
-	// private headers: Map<string, string>;
-	private headers: Header[];
+	private headers: Headers;
 	private uri: string;
 	private method: string;
 	private version: string;
 	private body: Body;
-	// private body_raw: Uint8Array;
 
 	constructor(request_from_backend: RequestFromBackend) {
 		this.id = request_from_backend.id;
 		this.uri = request_from_backend.uri;
-		this.headers = request_from_backend.headers;
+		this.headers = new Headers(request_from_backend.headers);
 		this.method = request_from_backend.method;
 		this.version = request_from_backend.version;
-		this.body = new Body(request_from_backend.body, request_from_backend.body_raw);
+		this.body = new Body(request_from_backend.body);
 	}
 
 	public get_id(): number {
@@ -43,7 +40,7 @@ export class Request {
 		return this.uri;
 	}
 
-	public get_headers(): Header[] {
+	public get_headers(): Headers {
 		return this.headers;
 	}
 
@@ -54,4 +51,10 @@ export class Request {
 	public get_body(): Body {
 		return this.body;
 	}
+}
+
+export interface RequestResponsePair {
+	id: number;
+	request: Request | undefined;
+	response: Response | undefined;
 }

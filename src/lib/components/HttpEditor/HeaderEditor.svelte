@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { type Header } from '$lib/header';
+	import { Headers } from '$lib/header';
 	import { DataTable } from 'carbon-components-svelte';
-	export let headers: Header[];
+	export let headers: Headers;
 </script>
 
 {#if headers !== undefined}
@@ -11,7 +11,7 @@
 			{ key: 'name', value: 'Name' },
 			{ key: 'value', value: 'Value' }
 		]}
-		rows={headers}
+		rows={headers.get_array()}
 		on:click:cell={() => {
 			console.log('clicked');
 		}}

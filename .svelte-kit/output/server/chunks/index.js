@@ -1,4 +1,4 @@
-import { w as noop, x as safe_not_equal, a as subscribe, r as run_all, y as is_function } from "./ssr.js";
+import { y as noop, z as safe_not_equal, a as subscribe, r as run_all, A as is_function } from "./ssr.js";
 const subscriber_queue = [];
 function readable(value, start) {
   return {
@@ -94,13 +94,7 @@ function derived(stores, fn, initial_value) {
     };
   });
 }
-function readonly(store) {
-  return {
-    subscribe: store.subscribe.bind(store)
-  };
-}
 export {
-  readonly as a,
   derived as d,
   readable as r,
   writable as w

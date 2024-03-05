@@ -3,7 +3,7 @@
 	import { proxy_start } from '$lib/proxy';
 	import 'carbon-components-svelte/css/g100.css';
 
-	let theme = 'g100'; // "white" | "g10" | "g80" | "g90" | "g100"
+	let theme = 'g80'; // "white" | "g10" | "g80" | "g90" | "g100"
 	// let theme = 'white'; // "white" | "g10" | "g80" | "g90" | "g100"
 	$: document.documentElement.setAttribute('theme', theme);
 

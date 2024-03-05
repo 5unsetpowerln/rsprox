@@ -16,6 +16,11 @@
 		"test:unit": "vitest"
 	},
 	"devDependencies": {
+		"@codemirror/lang-html": "^6.4.9",
+		"@codemirror/lang-javascript": "^6.2.2",
+		"@codemirror/lang-json": "^6.0.1",
+		"@codemirror/state": "^6.4.1",
+		"@codemirror/theme-one-dark": "^6.1.2",
 		"@playwright/test": "^1.28.1",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/adapter-static": "^3.0.4",
@@ -24,6 +29,7 @@
 		"@tauri-apps/cli": "^1.6.1",
 		"@types/eslint": "^9.6.0",
 		"carbon-components-svelte": "^0.85.2",
+		"codemirror": "^6.0.1",
 		"eslint": "^9.0.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.36.0",
@@ -40,7 +46,9 @@
 	"type": "module",
 	"dependencies": {
 		"@tauri-apps/api": "^1.6.0",
+		"@uiw/codemirror-themes": "^4.23.0",
 		"sass": "^1.77.8",
-		"svelte-splitpanes": "^8.0.5"
+		"svelte-splitpanes": "^8.0.5",
+		"thememirror": "^2.0.1"
 	}
 }

@@ -1,27 +1,26 @@
-import { Body } from './body';
-import { type Header } from './header';
+import { Body, type BodyFromBackend } from './body';
+import { type Header, Headers } from './header';
 
 export interface ResponseFromBackend {
 	id: number;
-	headers: Header[];
+	headers: Array<Header>;
 	status: number;
 	version: string;
-	body: string;
-	body_raw: Uint8Array;
+	body: BodyFromBackend;
 }
 
 export class Response {
 	private id: number;
-	private headers: Header[];
+	private headers: Headers;
 	private status: number;
 	private version: string;
 	private body: Body;
 
 	constructor(response_from_backend: ResponseFromBackend) {
 		this.id = response_from_backend.id;
-		this.headers = response_from_backend.headers;
+		this.headers = new Headers(response_from_backend.headers);
 		this.status = response_from_backend.status;
-		this.body = new Body(response_from_backend.body, response_from_backend.body_raw);
+		this.body = new Body(response_from_backend.body);
 		this.version = response_from_backend.version;
 	}
 

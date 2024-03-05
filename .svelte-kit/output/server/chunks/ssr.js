@@ -1,5 +1,9 @@
 function noop() {
 }
+function is_promise(value) {
+  return !!value && (typeof value === "object" || typeof value === "function") && typeof /** @type {any} */
+  value.then === "function";
+}
 function run(fn) {
   return fn();
 }
@@ -30,6 +34,13 @@ function compute_rest_props(props, keys) {
   keys = new Set(keys);
   for (const k in props) if (!keys.has(k) && k[0] !== "$") rest[k] = props[k];
   return rest;
+}
+function compute_slots(slots) {
+  const result = {};
+  for (const key in slots) {
+    result[key] = true;
+  }
+  return result;
 }
 function set_store_value(store, ret, value) {
   store.set(value);
@@ -267,6 +278,7 @@ function add_styles(style_object) {
   return styles ? ` style="${styles}"` : "";
 }
 export {
+  is_function as A,
   subscribe as a,
   set_current_component as b,
   create_ssr_component as c,
@@ -277,19 +289,20 @@ export {
   spread as h,
   escape_attribute_value as i,
   escape_object as j,
-  createEventDispatcher as k,
+  add_classes as k,
   add_attribute as l,
   missing_component as m,
-  add_classes as n,
-  add_styles as o,
-  set_store_value as p,
-  onDestroy as q,
+  createEventDispatcher as n,
+  compute_slots as o,
+  each as p,
+  set_store_value as q,
   run_all as r,
   setContext as s,
-  hasContext as t,
-  each as u,
+  add_styles as t,
+  onDestroy as u,
   validate_component as v,
-  noop as w,
-  safe_not_equal as x,
-  is_function as y
+  hasContext as w,
+  is_promise as x,
+  noop as y,
+  safe_not_equal as z
 };

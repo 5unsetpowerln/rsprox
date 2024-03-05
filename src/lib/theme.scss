@@ -34,7 +34,7 @@ $splitter_color: gray;
 	}
 	&.splitpanes--vertical > .splitpanes__splitter,
 	.splitpanes--vertical > .splitpanes__splitter {
-		width: 7px;
+		width: 4px;
 		border-left: 1px solid $splitter_color;
 		cursor: col-resize;
 		&:before,
@@ -52,7 +52,7 @@ $splitter_color: gray;
 	}
 	&.splitpanes--horizontal > .splitpanes__splitter,
 	.splitpanes--horizontal > .splitpanes__splitter {
-		height: 7px;
+		height: 4px;
 		border-top: 1px solid $splitter_color;
 		cursor: row-resize;
 		&:before,

@@ -8,22 +8,22 @@ use flate2::Compression;
 use http::HeaderValue;
 use std::io::prelude::*;
 
-pub enum Encoding {
+pub enum CompressionEncoding {
     Gzip,
     Deflate,
     Identity,
 }
 
-impl Encoding {
+impl CompressionEncoding {
     pub fn from(encoding_header: Option<&HeaderValue>) -> Result<Self> {
         if encoding_header.is_none() {
-            return Ok(Encoding::Identity);
+            return Ok(CompressionEncoding::Identity);
         }
         match encoding_header.unwrap().to_str().unwrap() {
-            "gzip" => Ok(Encoding::Gzip),
-            "deflate" => Ok(Encoding::Deflate),
-            "identity" => Ok(Encoding::Identity),
-            "" => Ok(Encoding::Identity),
+            "gzip" => Ok(CompressionEncoding::Gzip),
+            "deflate" => Ok(CompressionEncoding::Deflate),
+            "identity" => Ok(CompressionEncoding::Identity),
+            "" => Ok(CompressionEncoding::Identity),
             _ => {
                 panic!("unsupported encoding");
             }

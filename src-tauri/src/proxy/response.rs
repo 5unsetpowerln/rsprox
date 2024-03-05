@@ -1,7 +1,4 @@
-use std::{collections::HashMap, str::FromStr};
-
 use anyhow::{Context, Result};
-use bytes::Bytes;
 use http::{header::CONTENT_ENCODING, HeaderMap, Response, StatusCode, Version};
 use hyper::Body;
 use serde::{Deserialize, Serialize};
@@ -12,10 +9,9 @@ use crate::proxy::{
 };
 
 use super::{
-    body::{decode_body, encode_body},
-    encode::Encoding,
+    body::{decode_body, BodyForFrontend},
+    compression::CompressionEncoding,
     headers::Header,
-    util::bytes_to_string,
 };
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -25,8 +21,7 @@ pub struct ResponseForFrontend {
     headers: Vec<Header>,
     status: u16,
     version: String,
-    body: String,
-    body_raw: Vec<u8>,
+    body: BodyForFrontend,
 }
 
 impl ResponseForFrontend {
@@ -41,18 +36,17 @@ impl ResponseForFrontend {
         let version_string = parts.version.to_string().unwrap();
 
         let encoding_header = parts.headers.get(CONTENT_ENCODING);
-        let used_encoding =
-            Encoding::from(encoding_header).context("Failed to determine the encoding type")?;
+        let used_encoding = CompressionEncoding::from(encoding_header)
+            .context("Failed to determine the encoding type")?;
         let decoded_body_raw = decode_body(body, used_encoding)
             .await
             .context("Failed to decode a body")?;
-        let decoded_body = bytes_to_string(&decoded_body_raw).await;
+        let decoded_body = BodyForFrontend::new(decoded_body_raw);
 
         Ok(Self {
             id,
             headers,
             status: status_string,
-            body_raw: decoded_body_raw,
             body: decoded_body,
             version: version_string,
         })
@@ -63,10 +57,12 @@ impl ResponseForFrontend {
         let status = StatusCode::from_u16(self.status).unwrap();
 
         let encoding_header = headers.get(CONTENT_ENCODING);
-        let used_encoding =
-            Encoding::from(encoding_header).context("Failed to determine the encoding type")?;
-        let encoded_body =
-            encode_body(&self.body_raw, used_encoding).context("Failed to encode a body")?;
+        let used_encoding = CompressionEncoding::from(encoding_header)
+            .context("Failed to determine the encoding type")?;
+        let encoded_body = self
+            .body
+            .encode_body(used_encoding)
+            .context("Failed to encode a body")?;
 
         let version = Version::from_str(&self.version).unwrap();
 

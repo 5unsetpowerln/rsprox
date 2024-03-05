@@ -2,26 +2,22 @@ use anyhow::{Context, Result};
 use http::header::CONTENT_ENCODING;
 use hyper::{Body, HeaderMap, Method, Request, Uri, Version};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use std::str::{self, FromStr};
 
 use crate::proxy::body::clone_body;
 
-use super::body::{decode_body, encode_body};
-use super::encode::Encoding;
+use super::body::{decode_body, BodyForFrontend};
+use super::compression::CompressionEncoding;
 use super::headers::{Header, HeaderMapUtil, VersionUtil};
-use super::util::bytes_to_string;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct RequestForFrontend {
     id: usize,
-    // pub headers: HashMap<String, String>,
     headers: Vec<Header>,
     uri: String,
     method: String,
     version: String,
-    body: String,
-    body_raw: Vec<u8>,
+    body: BodyForFrontend,
 }
 
 impl RequestForFrontend {
@@ -38,12 +34,13 @@ impl RequestForFrontend {
         let version_string = parts.version.to_string().unwrap();
 
         let encoding_header = parts.headers.get(CONTENT_ENCODING);
-        let used_encoding =
-            Encoding::from(encoding_header).context("Failed to determine the encoding type")?;
-        let decoded_body_raw = decode_body(body, used_encoding)
+        let used_compression_encoding = CompressionEncoding::from(encoding_header)
+            .context("Failed to determine the encoding type")?;
+        let decoded_body_raw = decode_body(body, used_compression_encoding)
             .await
             .context("Failed to decode a body")?;
-        let decoded_body = bytes_to_string(&decoded_body_raw).await;
+        let decoded_body = BodyForFrontend::new(decoded_body_raw);
+        // let decoded_body = bytes_to_string(&decoded_body_raw).await;
 
         Ok(Self {
             id,
@@ -52,7 +49,6 @@ impl RequestForFrontend {
             method: method_string,
             version: version_string,
             body: decoded_body,
-            body_raw: decoded_body_raw,
         })
     }
 
@@ -63,10 +59,12 @@ impl RequestForFrontend {
         let version = Version::from_str(&self.version).unwrap();
 
         let encoding_header = headers.get(CONTENT_ENCODING);
-        let used_encoding =
-            Encoding::from(encoding_header).context("Failed to determine the encoding type")?;
-        let encoded_body_raw =
-            encode_body(&self.body_raw, used_encoding).context("Failed to encode a body")?;
+        let used_compression_encoding = CompressionEncoding::from(encoding_header)
+            .context("Failed to determine the encoding type")?;
+        let encoded_body = self
+            .body
+            .encode_body(used_compression_encoding)
+            .context("Failed to encode a body")?;
 
         let mut request_builder = hyper::Request::builder();
         for (name, value) in headers {
@@ -76,7 +74,7 @@ impl RequestForFrontend {
             .uri(uri)
             .method(method)
             .version(version)
-            .body(encoded_body_raw)
+            .body(encoded_body)
             .unwrap();
 
         Ok(request)

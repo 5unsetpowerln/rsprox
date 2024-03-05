@@ -125,7 +125,7 @@ async fn handle(
 }
 
 mod body;
-mod encode;
+mod compression;
 mod headers;
 mod request;
 mod response;

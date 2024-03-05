@@ -28,7 +28,6 @@
 declare module '$env/static/private' {
 	export const SHELL: string;
 	export const npm_command: string;
-	export const WINDOWID: string;
 	export const npm_config_userconfig: string;
 	export const WL: string;
 	export const COLORTERM: string;
@@ -60,6 +59,7 @@ declare module '$env/static/private' {
 	export const npm_config_init_module: string;
 	export const _: string;
 	export const XAUTHORITY: string;
+	export const DESKTOP_STARTUP_ID: string;
 	export const _VOLTA_TOOL_RECURSION: string;
 	export const XDG_GREETER_DATA_DIR: string;
 	export const API_KEY: string;
@@ -84,7 +84,6 @@ declare module '$env/static/private' {
 	export const TERM: string;
 	export const npm_package_name: string;
 	export const npm_config_prefix: string;
-	export const ZED_FORCE_CLI_MODE: string;
 	export const USER: string;
 	export const CUDA_PATH: string;
 	export const DISPLAY: string;
@@ -96,7 +95,6 @@ declare module '$env/static/private' {
 	export const TOOL_DIR: string;
 	export const npm_config_user_agent: string;
 	export const npm_execpath: string;
-	export const LD_LIBRARY_PATH: string;
 	export const WEZTERM_CONFIG_FILE: string;
 	export const XDG_RUNTIME_DIR: string;
 	export const PYENV_ROOT: string;
@@ -104,7 +102,6 @@ declare module '$env/static/private' {
 	export const DEBUGINFOD_URLS: string;
 	export const TAURI_FAMILY: string;
 	export const npm_package_json: string;
-	export const LC_ALL: string;
 	export const TAURI_DEBUG: string;
 	export const GTK3_MODULES: string;
 	export const npm_config_noproxy: string;
@@ -116,8 +113,6 @@ declare module '$env/static/private' {
 	export const PIPX_DEFAULT_PYTHON: string;
 	export const npm_config_global_prefix: string;
 	export const MAIL: string;
-	export const ALACRITTY_WINDOW_ID: string;
-	export const ZED_TERM: string;
 	export const npm_node_execpath: string;
 	export const npm_config_engine_strict: string;
 	export const WEZTERM_PANE: string;
@@ -157,7 +152,6 @@ declare module '$env/dynamic/private' {
 	export const env: {
 		SHELL: string;
 		npm_command: string;
-		WINDOWID: string;
 		npm_config_userconfig: string;
 		WL: string;
 		COLORTERM: string;
@@ -189,6 +183,7 @@ declare module '$env/dynamic/private' {
 		npm_config_init_module: string;
 		_: string;
 		XAUTHORITY: string;
+		DESKTOP_STARTUP_ID: string;
 		_VOLTA_TOOL_RECURSION: string;
 		XDG_GREETER_DATA_DIR: string;
 		API_KEY: string;
@@ -213,7 +208,6 @@ declare module '$env/dynamic/private' {
 		TERM: string;
 		npm_package_name: string;
 		npm_config_prefix: string;
-		ZED_FORCE_CLI_MODE: string;
 		USER: string;
 		CUDA_PATH: string;
 		DISPLAY: string;
@@ -225,7 +219,6 @@ declare module '$env/dynamic/private' {
 		TOOL_DIR: string;
 		npm_config_user_agent: string;
 		npm_execpath: string;
-		LD_LIBRARY_PATH: string;
 		WEZTERM_CONFIG_FILE: string;
 		XDG_RUNTIME_DIR: string;
 		PYENV_ROOT: string;
@@ -233,7 +226,6 @@ declare module '$env/dynamic/private' {
 		DEBUGINFOD_URLS: string;
 		TAURI_FAMILY: string;
 		npm_package_json: string;
-		LC_ALL: string;
 		TAURI_DEBUG: string;
 		GTK3_MODULES: string;
 		npm_config_noproxy: string;
@@ -245,8 +237,6 @@ declare module '$env/dynamic/private' {
 		PIPX_DEFAULT_PYTHON: string;
 		npm_config_global_prefix: string;
 		MAIL: string;
-		ALACRITTY_WINDOW_ID: string;
-		ZED_TERM: string;
 		npm_node_execpath: string;
 		npm_config_engine_strict: string;
 		WEZTERM_PANE: string;
