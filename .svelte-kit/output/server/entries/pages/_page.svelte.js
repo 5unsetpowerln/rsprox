@@ -1,5 +1,5 @@
-import { b as set_current_component, r as run_all, d as current_component, c as create_ssr_component, f as compute_rest_props, h as spread, i as escape_attribute_value, j as escape_object, e as escape, k as add_classes, l as add_attribute, g as getContext, v as validate_component, n as createEventDispatcher, o as compute_slots, p as each, a as subscribe, s as setContext, q as set_store_value, t as add_styles, m as missing_component, u as onDestroy, w as hasContext, x as is_promise, y as noop } from "../../chunks/ssr.js";
-import { r as readable, w as writable, d as derived } from "../../chunks/index.js";
+import { b as set_current_component, r as run_all, d as current_component, c as create_ssr_component, f as compute_rest_props, h as spread, i as escape_attribute_value, j as escape_object, e as escape, k as add_classes, l as add_attribute, n as createEventDispatcher, a as subscribe, g as getContext, s as setContext, v as validate_component, m as missing_component, o as compute_slots, p as each, q as set_store_value, t as add_styles, u as onDestroy, w as hasContext, x as is_promise, y as noop } from "../../chunks/ssr.js";
+import { w as writable, r as readable, d as derived } from "../../chunks/index.js";
 import { BROWSER } from "esm-env-robust";
 import { c as charset_options, h as history, g as get_small_history_header, a as get_small_history } from "../../chunks/proxy.js";
 import { StateEffect, EditorState } from "@codemirror/state";
@@ -132,6 +132,98 @@ const InlineCheckbox = create_ssr_component(($$result, $$props, $$bindings, slot
     { classes: "bx--checkbox" }
   )}${add_attribute("this", ref, 0)}> <label${add_attribute("for", id, 0)}${add_attribute("title", title, 0)}${add_attribute("aria-label", $$props["aria-label"], 0)}${add_classes("bx--checkbox-label".trim())}></label></div>`;
 });
+let direction = 1;
+const ContextMenu = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let level;
+  let $$restProps = compute_rest_props($$props, ["target", "open", "x", "y", "ref"]);
+  let $$unsubscribe_hasPopup;
+  let { target = null } = $$props;
+  let { open = false } = $$props;
+  let { x = 0 } = $$props;
+  let { y = 0 } = $$props;
+  let { ref = null } = $$props;
+  createEventDispatcher();
+  const position = writable([x, y]);
+  const currentIndex = writable(-1);
+  const hasPopup = writable(false);
+  $$unsubscribe_hasPopup = subscribe(hasPopup, (value) => value);
+  const menuOffsetX = writable(0);
+  const ctx = getContext("ContextMenu");
+  let focusIndex = -1;
+  function close() {
+    open = false;
+    x = 0;
+    y = 0;
+    focusIndex = -1;
+  }
+  function openMenu(e) {
+    e.preventDefault();
+    const { height, width } = ref.getBoundingClientRect();
+    if (open || x === 0) {
+      if (window.innerWidth - width < e.x) {
+        x = e.x - width;
+      } else {
+        x = e.x;
+      }
+    }
+    if (open || y === 0) {
+      menuOffsetX.set(e.x);
+      if (window.innerHeight - height < e.y) {
+        y = e.y - height;
+      } else {
+        y = e.y;
+      }
+    }
+    position.set([x, y]);
+    open = true;
+    e.target;
+  }
+  setContext("ContextMenu", {
+    menuOffsetX,
+    currentIndex,
+    position,
+    close,
+    setPopup: (popup) => {
+      hasPopup.set(popup);
+    }
+  });
+  if ($$props.target === void 0 && $$bindings.target && target !== void 0) $$bindings.target(target);
+  if ($$props.open === void 0 && $$bindings.open && open !== void 0) $$bindings.open(open);
+  if ($$props.x === void 0 && $$bindings.x && x !== void 0) $$bindings.x(x);
+  if ($$props.y === void 0 && $$bindings.y && y !== void 0) $$bindings.y(y);
+  if ($$props.ref === void 0 && $$bindings.ref && ref !== void 0) $$bindings.ref(ref);
+  {
+    if (target != null) {
+      if (Array.isArray(target)) {
+        target.forEach((node) => node?.addEventListener("contextmenu", openMenu));
+      } else {
+        target.addEventListener("contextmenu", openMenu);
+      }
+    }
+  }
+  level = !ctx ? 1 : 2;
+  {
+    currentIndex.set(focusIndex);
+  }
+  $$unsubscribe_hasPopup();
+  return `  <ul${spread(
+    [
+      { role: "menu" },
+      { tabindex: "-1" },
+      {
+        "data-direction": escape_attribute_value(direction)
+      },
+      {
+        "data-level": escape_attribute_value(level)
+      },
+      escape_object($$restProps)
+    ],
+    {
+      classes: "bx--menu " + (open ? "bx--menu--open" : "") + " " + (open && x === 0 && y === 0 ? "bx--menu--invisible" : "") + " " + (level === 1 ? "bx--menu--root" : ""),
+      styles: { "left": `${x}px`, "top": `${y}px` }
+    }
+  )}${add_attribute("this", ref, 0)}>${slots.default ? slots.default({}) : ``}</ul>`;
+});
 const Checkmark = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let labelled;
   let attributes;
@@ -159,6 +251,159 @@ const Checkmark = create_ssr_component(($$result, $$props, $$bindings, slots) =>
     ],
     {}
   )}>${title ? `<title>${escape(title)}</title>` : ``}<path d="M13 24L4 15 5.414 13.586 13 21.171 26.586 7.586 28 9 13 24z"></path></svg>`;
+});
+const CaretRight = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let labelled;
+  let attributes;
+  let $$restProps = compute_rest_props($$props, ["size", "title"]);
+  let { size = 16 } = $$props;
+  let { title = void 0 } = $$props;
+  if ($$props.size === void 0 && $$bindings.size && size !== void 0) $$bindings.size(size);
+  if ($$props.title === void 0 && $$bindings.title && title !== void 0) $$bindings.title(title);
+  labelled = $$props["aria-label"] || $$props["aria-labelledby"] || title;
+  attributes = {
+    "aria-hidden": labelled ? void 0 : true,
+    role: labelled ? "img" : void 0,
+    focusable: Number($$props["tabindex"]) === 0 ? true : void 0
+  };
+  return `<svg${spread(
+    [
+      { xmlns: "http://www.w3.org/2000/svg" },
+      { viewBox: "0 0 32 32" },
+      { fill: "currentColor" },
+      { preserveAspectRatio: "xMidYMid meet" },
+      { width: escape_attribute_value(size) },
+      { height: escape_attribute_value(size) },
+      escape_object(attributes),
+      escape_object($$restProps)
+    ],
+    {}
+  )}>${title ? `<title>${escape(title)}</title>` : ``}<path d="M12 8L22 16 12 24z"></path></svg>`;
+});
+const ContextMenuOption = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let isSelectable;
+  let isRadio;
+  let subOptions;
+  let $$restProps = compute_rest_props($$props, [
+    "kind",
+    "disabled",
+    "indented",
+    "icon",
+    "labelText",
+    "selected",
+    "selectable",
+    "shortcutText",
+    "id",
+    "ref"
+  ]);
+  let $$slots = compute_slots(slots);
+  let { kind = "default" } = $$props;
+  let { disabled = false } = $$props;
+  let { indented = false } = $$props;
+  let { icon = void 0 } = $$props;
+  let { labelText = "" } = $$props;
+  let { selected = false } = $$props;
+  let { selectable = false } = $$props;
+  let { shortcutText = "" } = $$props;
+  let { id = "ccs-" + Math.random().toString(36) } = $$props;
+  let { ref = null } = $$props;
+  createEventDispatcher();
+  const ctx = getContext("ContextMenu");
+  const ctxGroup = getContext("ContextMenuGroup");
+  const ctxRadioGroup = getContext("ContextMenuRadioGroup");
+  let role = "menuitem";
+  let submenuOpen = false;
+  let submenuPosition = [0, 0];
+  ctx.position.subscribe((position) => {
+  });
+  ctx.menuOffsetX.subscribe((_menuOffsetX) => {
+  });
+  if ($$props.kind === void 0 && $$bindings.kind && kind !== void 0) $$bindings.kind(kind);
+  if ($$props.disabled === void 0 && $$bindings.disabled && disabled !== void 0) $$bindings.disabled(disabled);
+  if ($$props.indented === void 0 && $$bindings.indented && indented !== void 0) $$bindings.indented(indented);
+  if ($$props.icon === void 0 && $$bindings.icon && icon !== void 0) $$bindings.icon(icon);
+  if ($$props.labelText === void 0 && $$bindings.labelText && labelText !== void 0) $$bindings.labelText(labelText);
+  if ($$props.selected === void 0 && $$bindings.selected && selected !== void 0) $$bindings.selected(selected);
+  if ($$props.selectable === void 0 && $$bindings.selectable && selectable !== void 0) $$bindings.selectable(selectable);
+  if ($$props.shortcutText === void 0 && $$bindings.shortcutText && shortcutText !== void 0) $$bindings.shortcutText(shortcutText);
+  if ($$props.id === void 0 && $$bindings.id && id !== void 0) $$bindings.id(id);
+  if ($$props.ref === void 0 && $$bindings.ref && ref !== void 0) $$bindings.ref(ref);
+  isSelectable = !!ctxGroup || selectable;
+  isRadio = !!ctxRadioGroup;
+  subOptions = $$slots.default;
+  {
+    ctx.setPopup(submenuOpen);
+  }
+  {
+    {
+      if (isSelectable) {
+        indented = true;
+        role = "menuitemcheckbox";
+        if (selected) {
+          if (ctxGroup) ctxGroup.addOption({ id });
+          icon = Checkmark;
+        } else {
+          icon = void 0;
+        }
+      }
+      if (isRadio) {
+        indented = true;
+        role = "menuitemradio";
+        ctxRadioGroup.addOption({ id });
+        if (selected) {
+          if (ctxRadioGroup) ctxRadioGroup.setOption({ id });
+          icon = Checkmark;
+        } else {
+          icon = void 0;
+        }
+      }
+    }
+  }
+  return `<li${spread(
+    [
+      { role: escape_attribute_value(role) },
+      { tabindex: "-1" },
+      {
+        "aria-disabled": escape_attribute_value(!subOptions && disabled)
+      },
+      {
+        "aria-haspopup": escape_attribute_value(subOptions ? true : void 0)
+      },
+      {
+        "aria-expanded": escape_attribute_value(subOptions ? submenuOpen : void 0)
+      },
+      {
+        indented: escape_attribute_value(indented)
+      },
+      {
+        "aria-checked": escape_attribute_value(isSelectable || isRadio ? selected : void 0)
+      },
+      {
+        "data-nested": escape_attribute_value(ref && ref.closest(".bx--menu").getAttribute("data-level") === "2")
+      },
+      {
+        "data-sub": escape_attribute_value(subOptions)
+      },
+      { "data-id": escape_attribute_value(id) },
+      escape_object($$restProps)
+    ],
+    {
+      classes: "bx--menu-option bx--menu-option--disabled " + (subOptions && submenuOpen ? "bx--menu-option--active" : "") + " " + (!subOptions && kind === "danger" ? "bx--menu-option--danger" : "")
+    }
+  )}${add_attribute("this", ref, 0)}>${subOptions ? `<div${add_classes(("bx--menu-option__content " + (disabled ? "bx--menu-option__content--disabled" : "")).trim())}>${indented ? `<div${add_classes("bx--menu-option__icon".trim())}>${slots.icon ? slots.icon({}) : ` ${validate_component(icon || missing_component, "svelte:component").$$render($$result, {}, {}, {})} `}</div>` : ``} <span${add_attribute("title", labelText, 0)}${add_classes("bx--menu-option__label".trim())}>${slots.labelText ? slots.labelText({}) : `${escape(labelText)}`}</span> <div${add_classes("bx--menu-option__info".trim())}>${validate_component(CaretRight, "CaretRight").$$render($$result, {}, {}, {})}</div></div> ${validate_component(ContextMenu, "ContextMenu").$$render(
+    $$result,
+    {
+      open: submenuOpen,
+      x: submenuPosition[0],
+      y: submenuPosition[1]
+    },
+    {},
+    {
+      default: () => {
+        return `${slots.default ? slots.default({}) : ``}`;
+      }
+    }
+  )}` : `<div${add_classes(("bx--menu-option__content " + (disabled ? "bx--menu-option__content--disabled" : "")).trim())}>${indented ? `<div${add_classes("bx--menu-option__icon".trim())}>${slots.icon ? slots.icon({}) : ` ${validate_component(icon || missing_component, "svelte:component").$$render($$result, {}, {}, {})} `}</div>` : ``} <span${add_attribute("title", labelText, 0)}${add_classes("bx--menu-option__label".trim())}>${slots.labelText ? slots.labelText({}) : `${escape(labelText)}`}</span> <div${add_classes("bx--menu-option__info".trim())}>${slots.shortcutText ? slots.shortcutText({}) : `${escape(shortcutText)}`}</div></div>`}</li>`;
 });
 const WarningFilled = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let labelled;
@@ -540,7 +785,7 @@ const ComboBox = create_ssr_component(($$result, $$props, $$bindings, slots) => 
   let { itemToString = (item) => item.text || item.id } = $$props;
   let { selectedId = void 0 } = $$props;
   let { value = "" } = $$props;
-  let { direction = "bottom" } = $$props;
+  let { direction: direction2 = "bottom" } = $$props;
   let { size = void 0 } = $$props;
   let { disabled = false } = $$props;
   let { titleText = "" } = $$props;
@@ -577,7 +822,7 @@ const ComboBox = create_ssr_component(($$result, $$props, $$bindings, slots) => 
   if ($$props.itemToString === void 0 && $$bindings.itemToString && itemToString !== void 0) $$bindings.itemToString(itemToString);
   if ($$props.selectedId === void 0 && $$bindings.selectedId && selectedId !== void 0) $$bindings.selectedId(selectedId);
   if ($$props.value === void 0 && $$bindings.value && value !== void 0) $$bindings.value(value);
-  if ($$props.direction === void 0 && $$bindings.direction && direction !== void 0) $$bindings.direction(direction);
+  if ($$props.direction === void 0 && $$bindings.direction && direction2 !== void 0) $$bindings.direction(direction2);
   if ($$props.size === void 0 && $$bindings.size && size !== void 0) $$bindings.size(size);
   if ($$props.disabled === void 0 && $$bindings.disabled && disabled !== void 0) $$bindings.disabled(disabled);
   if ($$props.titleText === void 0 && $$bindings.titleText && titleText !== void 0) $$bindings.titleText(titleText);
@@ -630,7 +875,7 @@ const ComboBox = create_ssr_component(($$result, $$props, $$bindings, slots) => 
     $$rendered = ` <div${add_classes("bx--list-box__wrapper".trim())}>${titleText || $$slots.titleText ? `<label${add_attribute("for", id, 0)}${add_classes(("bx--label " + (disabled ? "bx--label--disabled" : "")).trim())}>${slots.titleText ? slots.titleText({}) : ` ${escape(titleText)} `}</label>` : ``} ${validate_component(ListBox, "ListBox").$$render(
       $$result,
       {
-        class: "bx--combo-box " + (direction === "top" && "bx--list-box--up") + " " + (!invalid && warn && "bx--combo-box--warning"),
+        class: "bx--combo-box " + (direction2 === "top" && "bx--list-box--up") + " " + (!invalid && warn && "bx--combo-box--warning"),
         id: comboId,
         "aria-label": ariaLabel,
         disabled,
@@ -1366,8 +1611,8 @@ const Tabs = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     update: (id) => {
       currentIndex = $tabsById[id].index;
     },
-    change: async (direction) => {
-      let index = currentIndex + direction;
+    change: async (direction2) => {
+      let index = currentIndex + direction2;
       if (index < 0) {
         index = $tabs.length - 1;
       } else if (index >= $tabs.length) {
@@ -1375,7 +1620,7 @@ const Tabs = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       }
       let disabled = $tabs[index].disabled;
       while (disabled) {
-        index = index + direction;
+        index = index + direction2;
         if (index < 0) {
           index = $tabs.length - 1;
         } else if (index >= $tabs.length) {
@@ -1606,25 +1851,22 @@ const TextInput = create_ssr_component(($$result, $$props, $$bindings, slots) =>
     }
   )}${add_attribute("this", ref, 0)}${add_attribute("value", value, 0)}> ${isFluid ? `<hr${add_classes("bx--text-input__divider".trim())}>` : ``} ${isFluid && !inline && invalid ? `<div${add_attribute("id", errorId, 0)}${add_classes("bx--form-requirement".trim())}>${escape(invalidText)}</div>` : ``} ${isFluid && !inline && warn ? `<div${add_attribute("id", warnId, 0)}${add_classes("bx--form-requirement".trim())}>${escape(warnText)}</div>` : ``}</div> ${!invalid && !warn && !isFluid && !inline && helperText ? `<div${add_attribute("id", helperId, 0)}${add_classes(("bx--form__helper-text " + (disabled ? "bx--form__helper-text--disabled" : "") + " " + (inline ? "bx--form__helper-text--inline" : "")).trim())}>${escape(helperText)}</div>` : ``} ${!isFluid && invalid ? `<div${add_attribute("id", errorId, 0)}${add_classes("bx--form-requirement".trim())}>${escape(invalidText)}</div>` : ``} ${!isFluid && !invalid && warn ? `<div${add_attribute("id", warnId, 0)}${add_classes("bx--form-requirement".trim())}>${escape(warnText)}</div>` : ``}</div></div>`;
 });
-function get_component_name(component) {
-  return component.name.split("<")[1].split(">")[0];
-}
 const Tabs_1 = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { components = [] } = $$props;
   if ($$props.components === void 0 && $$bindings.components && components !== void 0) $$bindings.components(components);
-  return ` ${validate_component(Tabs, "Tabs").$$render($$result, {}, {}, {
+  return `${validate_component(Tabs, "Tabs").$$render($$result, {}, {}, {
     content: () => {
       return `${each(components, (component) => {
-        return `${validate_component(TabContent, "TabContent").$$render($$result, { style: "padding: 0px;" }, {}, {
+        return `${validate_component(TabContent, "TabContent").$$render($$result, { style: "padding: 0px; height: 100%;" }, {}, {
           default: () => {
-            return `${validate_component(component || missing_component, "svelte:component").$$render($$result, {}, {}, {})}`;
+            return `${validate_component(component.component || missing_component, "svelte:component").$$render($$result, Object.assign({}, component.props), {}, {})}`;
           }
         })}`;
       })} `;
     },
     default: () => {
       return `${each(components, (component) => {
-        return `${validate_component(Tab, "Tab").$$render($$result, { label: get_component_name(component) }, {}, {})}`;
+        return `${validate_component(Tab, "Tab").$$render($$result, { label: component.name }, {}, {})}`;
       })}`;
     }
   })}`;
@@ -2436,7 +2678,7 @@ const BodyEditor = create_ssr_component(($$result, $$props, $$bindings, slots) =
 });
 const css$3 = {
   code: ".top.svelte-dlqxe9{display:grid;grid-template-columns:33% 33% 34%}.root.svelte-dlqxe9{overflow:scroll}",
-  map: `{"version":3,"file":"RequestEditor.svelte","sources":["RequestEditor.svelte"],"sourcesContent":["<script lang=\\"ts\\">import { Request } from \\"$lib/request\\";\\nimport { ComboBox, Select, SelectItem, TextInput } from \\"carbon-components-svelte\\";\\nimport HeaderEditor from \\"./HeaderEditor.svelte\\";\\nimport BodyEditor from \\"./BodyEditor.svelte\\";\\nimport { charset_options } from \\"$lib/body\\";\\nexport let request;\\nexport let readonly = false;\\nlet headers = request.get_headers();\\nlet version = request.get_version();\\nlet method = request.get_method();\\nlet uri = request.get_uri();\\nlet body = request.get_body();\\nlet content_extension = headers.content_extension();\\nlet selected_charset_id = \\"0\\";\\n<\/script>\\n\\n{#if request !== undefined}\\n\\t<div class=\\"root\\">\\n\\t\\t<div class=\\"top\\">\\n\\t\\t\\t<TextInput readonly hideLabel size=\\"sm\\" value={version} />\\n\\t\\t\\t<ComboBox size=\\"sm\\" selectedId=\\"0\\" items={[{ id: '0', text: method }]} />\\n\\t\\t\\t<ComboBox size=\\"sm\\" bind:selectedId={selected_charset_id} items={charset_options} />\\n\\t\\t</div>\\n\\t\\t<TextInput hideLabel value={uri} size=\\"sm\\" />\\n\\t\\t<HeaderEditor {headers} />\\n\\t\\t<BodyEditor\\n\\t\\t\\t{body}\\n\\t\\t\\t{content_extension}\\n\\t\\t\\t{readonly}\\n\\t\\t\\tcharset={charset_options.find((entry) => entry.id === selected_charset_id)?.text}\\n\\t\\t/>\\n\\t</div>\\n{/if}\\n\\n<style lang=\\"scss\\">.top {\\n  display: grid;\\n  grid-template-columns: 33% 33% 34%;\\n}\\n\\n.root {\\n  overflow: scroll;\\n}</style>\\n"],"names":[],"mappings":"AAkCmB,kBAAK,CACtB,OAAO,CAAE,IAAI,CACb,qBAAqB,CAAE,GAAG,CAAC,GAAG,CAAC,GACjC,CAEA,mBAAM,CACJ,QAAQ,CAAE,MACZ"}`
+  map: `{"version":3,"file":"RequestEditor.svelte","sources":["RequestEditor.svelte"],"sourcesContent":["<script lang=\\"ts\\">import { Request } from \\"$lib/request\\";\\nimport {\\n  ComboBox,\\n  ContextMenu,\\n  ContextMenuDivider,\\n  ContextMenuGroup,\\n  ContextMenuOption,\\n  Select,\\n  SelectItem,\\n  TextInput\\n} from \\"carbon-components-svelte\\";\\nimport HeaderEditor from \\"./HeaderEditor.svelte\\";\\nimport BodyEditor from \\"./BodyEditor.svelte\\";\\nimport { charset_options } from \\"$lib/body\\";\\nexport let request;\\nexport let readonly = false;\\nlet headers = request.get_headers();\\nlet version = request.get_version();\\nlet method = request.get_method();\\nlet uri = request.get_uri();\\nlet body = request.get_body();\\nlet content_extension = headers.content_extension();\\nlet selected_charset_id = \\"0\\";\\n<\/script>\\n\\n{#if request !== undefined}\\n\\t<!-- <ContextMenu>\\n\\t\\t<ContextMenuOption indented labelText=\\"Copy\\" shortcutText=\\"⌘C\\" />\\n\\t\\t<ContextMenuOption indented labelText=\\"Cut\\" shortcutText=\\"⌘X\\" />\\n\\t\\t<ContextMenuDivider />\\n\\t\\t<ContextMenuOption indented labelText=\\"Export as\\">\\n\\t\\t\\t<ContextMenuGroup labelText=\\"Export options\\">\\n\\t\\t\\t\\t<ContextMenuOption id=\\"pdf\\" labelText=\\"PDF\\" />\\n\\t\\t\\t\\t<ContextMenuOption id=\\"txt\\" labelText=\\"TXT\\" />\\n\\t\\t\\t\\t<ContextMenuOption id=\\"mp3\\" labelText=\\"MP3\\" />\\n\\t\\t\\t</ContextMenuGroup>\\n\\t\\t</ContextMenuOption>\\n\\t\\t<ContextMenuDivider />\\n\\t\\t<ContextMenuOption selectable labelText=\\"Remove metadata\\" />\\n\\t\\t<ContextMenuDivider />\\n\\t\\t<ContextMenuGroup labelText=\\"Style options\\">\\n\\t\\t\\t<ContextMenuOption id=\\"0\\" labelText=\\"Font smoothing\\" selected />\\n\\t\\t\\t<ContextMenuOption id=\\"1\\" labelText=\\"Reduce noise\\" />\\n\\t\\t\\t<ContextMenuOption id=\\"2\\" labelText=\\"Auto-sharpen\\" />\\n\\t\\t</ContextMenuGroup>\\n\\t\\t<ContextMenuDivider />\\n\\t\\t<ContextMenuOption indented kind=\\"danger\\" labelText=\\"Delete\\" />\\n\\t</ContextMenu> -->\\n\\n\\t<div class=\\"root\\">\\n\\t\\t<div class=\\"top\\">\\n\\t\\t\\t<TextInput readonly hideLabel size=\\"sm\\" value={version} />\\n\\t\\t\\t<ComboBox size=\\"sm\\" selectedId=\\"0\\" items={[{ id: '0', text: method }]} />\\n\\t\\t\\t<ComboBox size=\\"sm\\" bind:selectedId={selected_charset_id} items={charset_options} />\\n\\t\\t</div>\\n\\t\\t<TextInput hideLabel value={uri} size=\\"sm\\" />\\n\\t\\t<HeaderEditor {headers} />\\n\\t\\t<BodyEditor\\n\\t\\t\\t{body}\\n\\t\\t\\t{content_extension}\\n\\t\\t\\t{readonly}\\n\\t\\t\\tcharset={charset_options.find((entry) => entry.id === selected_charset_id)?.text}\\n\\t\\t/>\\n\\t</div>\\n{/if}\\n\\n<style lang=\\"scss\\">.top {\\n  display: grid;\\n  grid-template-columns: 33% 33% 34%;\\n}\\n\\n.root {\\n  overflow: scroll;\\n}</style>\\n"],"names":[],"mappings":"AAkEmB,kBAAK,CACtB,OAAO,CAAE,IAAI,CACb,qBAAqB,CAAE,GAAG,CAAC,GAAG,CAAC,GACjC,CAEA,mBAAM,CACJ,QAAQ,CAAE,MACZ"}`
 };
 const RequestEditor = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { request } = $$props;
@@ -2457,7 +2699,7 @@ const RequestEditor = create_ssr_component(($$result, $$props, $$bindings, slots
   do {
     $$settled = true;
     $$result.head = previous_head;
-    $$rendered = `${request !== void 0 ? `<div class="root svelte-dlqxe9"><div class="top svelte-dlqxe9">${validate_component(TextInput, "TextInput").$$render(
+    $$rendered = `${request !== void 0 ? ` <div class="root svelte-dlqxe9"><div class="top svelte-dlqxe9">${validate_component(TextInput, "TextInput").$$render(
       $$result,
       {
         readonly: true,
@@ -2573,23 +2815,70 @@ const ResponseEditor = create_ssr_component(($$result, $$props, $$bindings, slot
   } while (!$$settled);
   return $$rendered;
 });
+class RequestInRepeaters {
+  next_id;
+  requests;
+  components;
+  constructor() {
+    this.next_id = 1;
+    this.requests = writable([]);
+    this.components = [];
+  }
+  add(request) {
+    this.requests.update((requests) => {
+      requests.push({ id: this.next_id, request });
+      const pair = {
+        id: this.next_id,
+        request,
+        response: void 0
+      };
+      this.components.push({
+        component: HttpEditor$1,
+        props: { pair },
+        name: this.next_id.toString()
+      });
+      this.next_id += 1;
+      return requests;
+    });
+  }
+  get_requests() {
+    return this.requests;
+  }
+  get_components() {
+    return this.components;
+  }
+}
+const requests_in_repeater = new RequestInRepeaters();
 const css$1 = {
   code: ".HttpEditor.svelte-n2e3ae.svelte-n2e3ae{height:100%;overflow:scroll}.HttpEditor.svelte-n2e3ae .request.svelte-n2e3ae{height:100%;overflow:scroll}.HttpEditor.svelte-n2e3ae .response.svelte-n2e3ae{overflow:scroll;height:100%}",
-  map: '{"version":3,"file":"HttpEditor.svelte","sources":["HttpEditor.svelte"],"sourcesContent":["<script lang=\\"ts\\">import { Splitpanes, Pane } from \\"$lib/components/Splitpanes\\";\\nimport RequestEditor from \\"./RequestEditor.svelte\\";\\nimport ResponseEditor from \\"./ResponseEditor.svelte\\";\\nexport let readonly = false;\\nexport let pair;\\nlet request = pair?.request;\\nlet response = pair?.response;\\n<\/script>\\n\\n<div class=\\"HttpEditor\\">\\n\\t<Splitpanes style=\\"height: 100%;\\">\\n\\t\\t<Pane size={50}>\\n\\t\\t\\t{#key request}\\n\\t\\t\\t\\t{#if request !== undefined}\\n\\t\\t\\t\\t\\t<div class=\\"request\\">\\n\\t\\t\\t\\t\\t\\t<RequestEditor {readonly} {request} />\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t{/if}\\n\\t\\t\\t{/key}\\n\\t\\t</Pane>\\n\\t\\t<Pane size={50}>\\n\\t\\t\\t<!-- {#key response} -->\\n\\t\\t\\t{#if response !== undefined}\\n\\t\\t\\t\\t<div class=\\"response\\">\\n\\t\\t\\t\\t\\t<ResponseEditor {readonly} {response} />\\n\\t\\t\\t\\t</div>\\n\\t\\t\\t{/if}\\n\\t\\t\\t<!-- {/key response} -->\\n\\t\\t</Pane>\\n\\t</Splitpanes>\\n</div>\\n\\n<style lang=\\"scss\\">.HttpEditor {\\n  height: 100%;\\n  overflow: scroll;\\n}\\n.HttpEditor .request {\\n  height: 100%;\\n  overflow: scroll;\\n}\\n.HttpEditor .response {\\n  overflow: scroll;\\n  height: 100%;\\n}</style>\\n"],"names":[],"mappings":"AAgCmB,uCAAY,CAC7B,MAAM,CAAE,IAAI,CACZ,QAAQ,CAAE,MACZ,CACA,yBAAW,CAAC,sBAAS,CACnB,MAAM,CAAE,IAAI,CACZ,QAAQ,CAAE,MACZ,CACA,yBAAW,CAAC,uBAAU,CACpB,QAAQ,CAAE,MAAM,CAChB,MAAM,CAAE,IACV"}'
+  map: '{"version":3,"file":"HttpEditor.svelte","sources":["HttpEditor.svelte"],"sourcesContent":["<script lang=\\"ts\\">import { Splitpanes, Pane } from \\"$lib/components/Splitpanes\\";\\nimport { ContextMenu, ContextMenuOption } from \\"carbon-components-svelte\\";\\nimport RequestEditor from \\"./RequestEditor.svelte\\";\\nimport ResponseEditor from \\"./ResponseEditor.svelte\\";\\nimport { requests_in_repeater } from \\"$lib/repeater\\";\\nexport let readonly = false;\\nexport let pair;\\nlet request = pair?.request;\\nlet response = pair?.response;\\nlet request_div;\\nfunction send_request_to_repeater() {\\n  if (request !== void 0) {\\n    requests_in_repeater.add(request);\\n  }\\n}\\n<\/script>\\n\\n<ContextMenu target={request_div}>\\n\\t<ContextMenuOption indented labelText=\\"Send to repeater\\" on:click={send_request_to_repeater} />\\n</ContextMenu>\\n\\n<div class=\\"HttpEditor\\">\\n\\t<Splitpanes style=\\"height: 100%;\\">\\n\\t\\t<Pane size={50}>\\n\\t\\t\\t{#key request}\\n\\t\\t\\t\\t{#if request !== undefined}\\n\\t\\t\\t\\t\\t<div bind:this={request_div} class=\\"request\\">\\n\\t\\t\\t\\t\\t\\t<RequestEditor {readonly} {request} />\\n\\t\\t\\t\\t\\t</div>\\n\\t\\t\\t\\t{/if}\\n\\t\\t\\t{/key}\\n\\t\\t</Pane>\\n\\t\\t<Pane size={50}>\\n\\t\\t\\t<!-- {#key response} -->\\n\\t\\t\\t{#if response !== undefined}\\n\\t\\t\\t\\t<div class=\\"response\\">\\n\\t\\t\\t\\t\\t<ResponseEditor {readonly} {response} />\\n\\t\\t\\t\\t</div>\\n\\t\\t\\t{/if}\\n\\t\\t\\t<!-- {/key response} -->\\n\\t\\t</Pane>\\n\\t</Splitpanes>\\n</div>\\n\\n<style lang=\\"scss\\">.HttpEditor {\\n  height: 100%;\\n  overflow: scroll;\\n}\\n.HttpEditor .request {\\n  height: 100%;\\n  overflow: scroll;\\n}\\n.HttpEditor .response {\\n  overflow: scroll;\\n  height: 100%;\\n}</style>\\n"],"names":[],"mappings":"AA4CmB,uCAAY,CAC7B,MAAM,CAAE,IAAI,CACZ,QAAQ,CAAE,MACZ,CACA,yBAAW,CAAC,sBAAS,CACnB,MAAM,CAAE,IAAI,CACZ,QAAQ,CAAE,MACZ,CACA,yBAAW,CAAC,uBAAU,CACpB,QAAQ,CAAE,MAAM,CAChB,MAAM,CAAE,IACV"}'
 };
 const HttpEditor = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { readonly = false } = $$props;
   let { pair } = $$props;
   let request = pair?.request;
   let response = pair?.response;
+  let request_div;
   if ($$props.readonly === void 0 && $$bindings.readonly && readonly !== void 0) $$bindings.readonly(readonly);
   if ($$props.pair === void 0 && $$bindings.pair && pair !== void 0) $$bindings.pair(pair);
   $$result.css.add(css$1);
-  return `<div class="HttpEditor svelte-n2e3ae">${validate_component(Splitpanes, "Splitpanes").$$render($$result, { style: "height: 100%;" }, {}, {
+  return `${validate_component(ContextMenu, "ContextMenu").$$render($$result, { target: request_div }, {}, {
+    default: () => {
+      return `${validate_component(ContextMenuOption, "ContextMenuOption").$$render(
+        $$result,
+        {
+          indented: true,
+          labelText: "Send to repeater"
+        },
+        {},
+        {}
+      )}`;
+    }
+  })} <div class="HttpEditor svelte-n2e3ae">${validate_component(Splitpanes, "Splitpanes").$$render($$result, { style: "height: 100%;" }, {}, {
     default: () => {
       return `${validate_component(Pane, "Pane").$$render($$result, { size: 50 }, {}, {
         default: () => {
-          return `${request !== void 0 ? `<div class="request svelte-n2e3ae">${validate_component(RequestEditor, "RequestEditor").$$render($$result, { readonly, request }, {}, {})}</div>` : ``}`;
+          return `${request !== void 0 ? `<div class="request svelte-n2e3ae"${add_attribute("this", request_div, 0)}>${validate_component(RequestEditor, "RequestEditor").$$render($$result, { readonly, request }, {}, {})}</div>` : ``}`;
         }
       })} ${validate_component(Pane, "Pane").$$render($$result, { size: 50 }, {}, {
         default: () => {
@@ -2599,9 +2888,10 @@ const HttpEditor = create_ssr_component(($$result, $$props, $$bindings, slots) =
     }
   })} </div>`;
 });
+const HttpEditor$1 = HttpEditor;
 const css = {
   code: ".history.svelte-7vliks.svelte-7vliks{height:100%}.history.svelte-7vliks .http_list.svelte-7vliks{overflow:scroll;height:100%}",
-  map: '{"version":3,"file":"history.svelte","sources":["history.svelte"],"sourcesContent":["<script lang=\\"ts\\">import HttpEditor from \\"$lib/components/HttpEditor/HttpEditor.svelte\\";\\nimport {\\n  get_small_history,\\n  get_small_history_header,\\n  history\\n} from \\"$lib/proxy\\";\\nimport { DataTable } from \\"carbon-components-svelte\\";\\nimport { Splitpanes, Pane } from \\"$lib/components/Splitpanes\\";\\nimport { writable } from \\"svelte/store\\";\\nlet selected_pair = writable();\\nasync function update_selected_pair(id) {\\n  const index = $history.findIndex((entry) => entry.id === id);\\n  if (index > 0) {\\n    selected_pair.set($history[index]);\\n  }\\n}\\nlet sortKey = void 0;\\nlet sortDirection = void 0;\\n<\/script>\\n\\n<div class=\\"history\\">\\n\\t<Splitpanes horizontal style=\\"height: 100%;\\">\\n\\t\\t<Pane size={50}>\\n\\t\\t\\t<div class=\\"http_list\\">\\n\\t\\t\\t\\t{#key $history}\\n\\t\\t\\t\\t\\t{#await get_small_history($history) then small_history}\\n\\t\\t\\t\\t\\t\\t<DataTable\\n\\t\\t\\t\\t\\t\\t\\tbind:sortKey\\n\\t\\t\\t\\t\\t\\t\\tbind:sortDirection\\n\\t\\t\\t\\t\\t\\t\\tsortable\\n\\t\\t\\t\\t\\t\\t\\theaders={get_small_history_header(small_history[0])}\\n\\t\\t\\t\\t\\t\\t\\trows={small_history}\\n\\t\\t\\t\\t\\t\\t\\ton:click:row={(event) => {\\n\\t\\t\\t\\t\\t\\t\\t\\tupdate_selected_pair(event.detail.id);\\n\\t\\t\\t\\t\\t\\t\\t}}\\n\\t\\t\\t\\t\\t\\t\\tsize=\\"short\\"\\n\\t\\t\\t\\t\\t\\t></DataTable>\\n\\t\\t\\t\\t\\t{/await}\\n\\t\\t\\t\\t{/key}\\n\\t\\t\\t</div>\\n\\t\\t</Pane>\\n\\t\\t<Pane size={50}>\\n\\t\\t\\t{#key $selected_pair}\\n\\t\\t\\t\\t<HttpEditor readonly pair={$selected_pair} />\\n\\t\\t\\t{/key}\\n\\t\\t</Pane>\\n\\t</Splitpanes>\\n</div>\\n\\n<style lang=\\"scss\\">.history {\\n  height: 100%;\\n}\\n.history .http_list {\\n  overflow: scroll;\\n  height: 100%;\\n}</style>\\n"],"names":[],"mappings":"AAiDmB,oCAAS,CAC1B,MAAM,CAAE,IACV,CACA,sBAAQ,CAAC,wBAAW,CAClB,QAAQ,CAAE,MAAM,CAChB,MAAM,CAAE,IACV"}'
+  map: '{"version":3,"file":"history.svelte","sources":["history.svelte"],"sourcesContent":["<script lang=\\"ts\\">import HttpEditor from \\"$lib/components/HttpEditor/HttpEditor.svelte\\";\\nimport { get_small_history, get_small_history_header, history } from \\"$lib/proxy\\";\\nimport {} from \\"$lib/request\\";\\nimport { DataTable } from \\"carbon-components-svelte\\";\\nimport { Splitpanes, Pane } from \\"$lib/components/Splitpanes\\";\\nimport { writable } from \\"svelte/store\\";\\nlet selected_pair = writable();\\nasync function update_selected_pair(id) {\\n  const index = $history.findIndex((entry) => entry.id === id);\\n  if (index > 0) {\\n    selected_pair.set($history[index]);\\n  }\\n}\\nlet sortKey = void 0;\\nlet sortDirection = void 0;\\n<\/script>\\n\\n<div class=\\"history\\">\\n\\t<Splitpanes horizontal style=\\"height: 100%;\\">\\n\\t\\t<Pane size={50}>\\n\\t\\t\\t<div class=\\"http_list\\">\\n\\t\\t\\t\\t{#key $history}\\n\\t\\t\\t\\t\\t{#await get_small_history($history) then small_history}\\n\\t\\t\\t\\t\\t\\t<DataTable\\n\\t\\t\\t\\t\\t\\t\\tbind:sortKey\\n\\t\\t\\t\\t\\t\\t\\tbind:sortDirection\\n\\t\\t\\t\\t\\t\\t\\tsortable\\n\\t\\t\\t\\t\\t\\t\\theaders={get_small_history_header(small_history[0])}\\n\\t\\t\\t\\t\\t\\t\\trows={small_history}\\n\\t\\t\\t\\t\\t\\t\\ton:click:row={(event) => {\\n\\t\\t\\t\\t\\t\\t\\t\\tupdate_selected_pair(event.detail.id);\\n\\t\\t\\t\\t\\t\\t\\t}}\\n\\t\\t\\t\\t\\t\\t\\tsize=\\"short\\"\\n\\t\\t\\t\\t\\t\\t></DataTable>\\n\\t\\t\\t\\t\\t{/await}\\n\\t\\t\\t\\t{/key}\\n\\t\\t\\t</div>\\n\\t\\t</Pane>\\n\\t\\t<Pane size={50}>\\n\\t\\t\\t{#key $selected_pair}\\n\\t\\t\\t\\t<HttpEditor readonly pair={$selected_pair} />\\n\\t\\t\\t{/key}\\n\\t\\t</Pane>\\n\\t</Splitpanes>\\n</div>\\n\\n<style lang=\\"scss\\">.history {\\n  height: 100%;\\n}\\n.history .http_list {\\n  overflow: scroll;\\n  height: 100%;\\n}</style>\\n"],"names":[],"mappings":"AA8CmB,oCAAS,CAC1B,MAAM,CAAE,IACV,CACA,sBAAQ,CAAC,wBAAW,CAClB,QAAQ,CAAE,MAAM,CAChB,MAAM,CAAE,IACV"}'
 };
 const History = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $history, $$unsubscribe_history;
@@ -2655,7 +2945,7 @@ const History = create_ssr_component(($$result, $$props, $$bindings, slots) => {
           }
         })} ${validate_component(Pane, "Pane").$$render($$result, { size: 50 }, {}, {
           default: () => {
-            return `${validate_component(HttpEditor, "HttpEditor").$$render($$result, { readonly: true, pair: $selected_pair }, {}, {})}`;
+            return `${validate_component(HttpEditor$1, "HttpEditor").$$render($$result, { readonly: true, pair: $selected_pair }, {}, {})}`;
           }
         })}`;
       }
@@ -2669,13 +2959,48 @@ const Intercept = create_ssr_component(($$result, $$props, $$bindings, slots) =>
   return ``;
 });
 const Proxy = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `${validate_component(Tabs_1, "Tabs").$$render($$result, { components: [History, Intercept] }, {}, {})}`;
+  let components = [
+    {
+      component: History,
+      name: "History",
+      props: {}
+    },
+    {
+      component: Intercept,
+      name: "Intercept",
+      props: {}
+    }
+  ];
+  return `${validate_component(Tabs_1, "Tabs").$$render($$result, { components }, {}, {})}`;
 });
 const Repeater = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return ``;
+  let $$unsubscribe_requests;
+  let requests = requests_in_repeater.get_requests();
+  $$unsubscribe_requests = subscribe(requests, (value) => value);
+  $$unsubscribe_requests();
+  return `${validate_component(Tabs_1, "Tabs").$$render(
+    $$result,
+    {
+      components: requests_in_repeater.get_components()
+    },
+    {},
+    {}
+  )} `;
 });
 const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  return `${validate_component(Tabs_1, "Tabs").$$render($$result, { components: [Proxy, Repeater] }, {}, {})}`;
+  let components = [
+    {
+      component: Proxy,
+      props: {},
+      name: "Proxy"
+    },
+    {
+      component: Repeater,
+      props: {},
+      name: "Repeater"
+    }
+  ];
+  return `${validate_component(Tabs_1, "Tabs").$$render($$result, { components }, {}, {})}`;
 });
 export {
   Page as default
