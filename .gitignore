@@ -13,6 +13,8 @@ dist-ssr
 *.local
 build
 build/
+.svelte-kit
+.svelte-kit/
 # Editor directories and files
 .zed/*
 .vscode/*
