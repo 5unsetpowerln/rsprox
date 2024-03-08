@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { Response } from '$lib/response';
-	import { ComboBox, Select, SelectItem, TextInput } from 'carbon-components-svelte';
+	import type { Response } from '$lib/http/response';
+	import { ComboBox, TextInput } from 'carbon-components-svelte';
 	import HeaderEditor from './HeaderEditor.svelte';
 	import BodyEditor from './BodyEditor.svelte';
-	import { charset_options } from '$lib/body';
+	import { charset_options } from '$lib/http/body';
 
 	export let response: Response;
 	export let readonly: boolean = false;

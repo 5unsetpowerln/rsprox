@@ -35,7 +35,6 @@ rcgen = "0.11.2"
 hyper-util = { version = "0.1.7", features = ["full"] }
 anyhow = "1.0.86"
 encoding_rs = { version = "0.8.34", features = ["serde"] }
-scraper = "0.20.0"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.

@@ -3,19 +3,14 @@ use http::{header::CONTENT_ENCODING, HeaderMap, Response, StatusCode, Version};
 use hyper::Body;
 use serde::{Deserialize, Serialize};
 
-use crate::proxy::{
-    body::clone_body,
-    headers::{HeaderMapUtil, VersionUtil},
-};
-
 use super::{
-    body::{decode_body, BodyForFrontend},
+    body::{clone_body, decode_body, BodyForFrontend},
     compression::CompressionEncoding,
-    headers::Header,
+    headers::{Header, HeaderMapUtil, VersionUtil},
 };
 
 #[derive(Serialize, Deserialize, Clone)]
-pub struct ResponseForFrontend {
+pub struct ResponseToInteractWithFrontend {
     id: usize,
     // headers: HashMap<String, String>,
     headers: Vec<Header>,
@@ -24,7 +19,7 @@ pub struct ResponseForFrontend {
     body: BodyForFrontend,
 }
 
-impl ResponseForFrontend {
+impl ResponseToInteractWithFrontend {
     pub async fn from_hyper(response: Response<Body>, id: usize) -> Result<Self> {
         let (parts, body) = response.into_parts();
 

@@ -1,12 +1,12 @@
-import { Body, type BodyFromBackend } from './body';
-import { type Header, Headers } from './header';
+import { Body, type BodyToInteractWithBackend } from './body';
+import { Headers, type HeadersToInteractWithBackend } from './header';
 
-export interface ResponseFromBackend {
+export interface ResponseToInteractWithBackend {
 	id: number;
-	headers: Array<Header>;
+	headers: HeadersToInteractWithBackend;
 	status: number;
 	version: string;
-	body: BodyFromBackend;
+	body: BodyToInteractWithBackend;
 }
 
 export class Response {
@@ -16,7 +16,7 @@ export class Response {
 	private version: string;
 	private body: Body;
 
-	constructor(response_from_backend: ResponseFromBackend) {
+	constructor(response_from_backend: ResponseToInteractWithBackend) {
 		this.id = response_from_backend.id;
 		this.headers = new Headers(response_from_backend.headers);
 		this.status = response_from_backend.status;

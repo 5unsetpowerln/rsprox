@@ -1,17 +1,16 @@
 use anyhow::{Context, Result};
 use http::header::CONTENT_ENCODING;
 use hyper::{Body, HeaderMap, Method, Request, Uri, Version};
+use hyper_tls::HttpsConnector;
 use serde::{Deserialize, Serialize};
 use std::str::{self, FromStr};
 
-use crate::proxy::body::clone_body;
-
-use super::body::{decode_body, BodyForFrontend};
+use super::body::{clone_body, decode_body, BodyForFrontend};
 use super::compression::CompressionEncoding;
 use super::headers::{Header, HeaderMapUtil, VersionUtil};
 
 #[derive(Serialize, Deserialize, Clone)]
-pub struct RequestForFrontend {
+pub struct RequestToInteractWithFrontend {
     id: usize,
     headers: Vec<Header>,
     uri: String,
@@ -20,7 +19,7 @@ pub struct RequestForFrontend {
     body: BodyForFrontend,
 }
 
-impl RequestForFrontend {
+impl RequestToInteractWithFrontend {
     pub async fn from_hyper(request: Request<Body>, id: usize) -> Result<Self> {
         let (parts, body) = request.into_parts();
 
@@ -116,4 +115,14 @@ pub async fn clone_request(request: Request<Body>) -> Result<(Request<Body>, Req
         .context("Failed to build a request")?;
 
     Ok((request1, request2))
+}
+
+pub async fn send_request(request: hyper::Request<hyper::Body>) -> Result<hyper::Response<Body>> {
+    let https = HttpsConnector::new();
+    let client = hyper::Client::builder().build::<_, hyper::Body>(https);
+    let response = client
+        .request(request)
+        .await
+        .context("Failed to send request to the destination")?;
+    Ok(response)
 }

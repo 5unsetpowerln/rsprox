@@ -1,11 +1,10 @@
+use crate::http::request::{clone_request, send_request, RequestToInteractWithFrontend};
+use crate::http::response::{clone_response, ResponseToInteractWithFrontend};
 use anyhow::Result;
 use http::{Request, Response};
 use hyper::{Body, Server};
-use hyper_tls::HttpsConnector;
-use request::{clone_request, RequestForFrontend};
-use response::{clone_response, ResponseForFrontend};
 use std::sync::{Arc, Mutex};
-use std::{convert::Infallible, io::Read, net::SocketAddr};
+use std::{convert::Infallible, net::SocketAddr};
 use tauri::{AppHandle, Manager};
 
 pub async fn run_proxy_server(is_intercepted: Arc<Mutex<bool>>, app_handle: AppHandle) {
@@ -44,7 +43,7 @@ pub async fn run_proxy_server(is_intercepted: Arc<Mutex<bool>>, app_handle: AppH
 }
 
 async fn send_request_to_frontend(
-    request: &RequestForFrontend,
+    request: &RequestToInteractWithFrontend,
     app_handle: &AppHandle,
 ) -> Result<()> {
     let request_json = serde_json::to_string(request).unwrap();
@@ -55,7 +54,7 @@ async fn send_request_to_frontend(
 }
 
 async fn send_response_to_frontend(
-    response: &ResponseForFrontend,
+    response: &ResponseToInteractWithFrontend,
     app_handle: &AppHandle,
 ) -> Result<()> {
     let response_json = serde_json::to_string(response).unwrap();
@@ -82,7 +81,7 @@ async fn handle(
         .await
         .expect("Failed to clone request");
     let request_for_frontend =
-        RequestForFrontend::from_hyper(cloned_request, request_response_pair_id_)
+        RequestToInteractWithFrontend::from_hyper(cloned_request, request_response_pair_id_)
             .await
             .unwrap();
     send_request_to_frontend(&request_for_frontend, app_handle)
@@ -94,22 +93,14 @@ async fn handle(
         todo!()
     }
 
-    let response = {
-        let https = HttpsConnector::new();
-        let client = hyper::Client::builder().build::<_, hyper::Body>(https);
-        let resp = client.request(request).await;
-        if resp.is_err() {
-            panic!("proxy error >>> {}", resp.unwrap_err());
-        }
-        resp.unwrap()
-    };
+    let response = send_request(request).await.unwrap();
 
     let (response, cloned_response) = clone_response(response)
         .await
         .expect("Failed to clone response");
 
     let response_for_frontend =
-        ResponseForFrontend::from_hyper(cloned_response, request_response_pair_id_)
+        ResponseToInteractWithFrontend::from_hyper(cloned_response, request_response_pair_id_)
             .await
             .unwrap();
 
@@ -123,10 +114,3 @@ async fn handle(
 
     response
 }
-
-mod body;
-mod compression;
-mod headers;
-mod request;
-mod response;
-mod util;

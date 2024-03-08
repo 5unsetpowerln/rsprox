@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { Body, Charset } from '$lib/body';
+	import type { Body, Charset } from '$lib/http/body';
 	import CodeEditor from '../CodeEditor/CodeEditor.svelte';
-	import type { ContentExtension } from '$lib/header';
+	import type { ContentExtension } from '$lib/http/header';
 	import { onMount } from 'svelte';
 
 	export let body: Body;

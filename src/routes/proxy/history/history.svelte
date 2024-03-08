@@ -1,7 +1,7 @@
 <script lang="ts">
 	import HttpEditor from '$lib/components/HttpEditor/HttpEditor.svelte';
 	import { get_small_history, get_small_history_header, history } from '$lib/proxy';
-	import { type RequestResponsePair } from '$lib/request';
+	import { type RequestResponsePair } from '$lib/http/request';
 	import { DataTable } from 'carbon-components-svelte';
 	import { Splitpanes, Pane } from '$lib/components/Splitpanes';
 	import { writable, type Writable } from 'svelte/store';

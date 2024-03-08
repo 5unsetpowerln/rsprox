@@ -1,15 +1,16 @@
 <script lang="ts">
 	import { Splitpanes, Pane } from '$lib/components/Splitpanes';
-	import type { RequestResponsePair } from '$lib/request';
+	import type { RequestResponsePair, Request } from '$lib/http/request';
 	import { ContextMenu, ContextMenuOption } from 'carbon-components-svelte';
 	import RequestEditor from './RequestEditor.svelte';
 	import ResponseEditor from './ResponseEditor.svelte';
-	import type { Response } from '$lib/response';
-	import type { Request } from '$lib/request';
+	import type { Response } from '$lib/http/response';
 	import { requests_in_repeater } from '$lib/repeater';
 
 	export let readonly: boolean = false;
+	// export let send_handler: SendHandler | undefined = undefined;
 	export let pair: RequestResponsePair;
+	export let sendable: boolean = false;
 
 	let request: Request | undefined = pair?.request;
 	let response: Response | undefined = pair?.response;
@@ -24,9 +25,11 @@
 	}
 </script>
 
-<ContextMenu target={request_div}>
-	<ContextMenuOption indented labelText="Send to repeater" on:click={send_request_to_repeater} />
-</ContextMenu>
+{#if request_div !== undefined}
+	<ContextMenu target={request_div}>
+		<ContextMenuOption indented labelText="Send to repeater" on:click={send_request_to_repeater} />
+	</ContextMenu>
+{/if}
 
 <div class="HttpEditor">
 	<Splitpanes style="height: 100%;">
@@ -34,7 +37,11 @@
 			{#key request}
 				{#if request !== undefined}
 					<div bind:this={request_div} class="request">
-						<RequestEditor {readonly} {request} />
+						{#if sendable}
+							<RequestEditor {readonly} {request} {sendable} bind:received_response={response} />
+						{:else}
+							<RequestEditor {readonly} {request} {sendable} />
+						{/if}
 					</div>
 				{/if}
 			{/key}

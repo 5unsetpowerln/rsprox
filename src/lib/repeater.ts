@@ -1,8 +1,8 @@
 import { writable, type Writable } from 'svelte/store';
-import type { Request } from './request';
+import type { Request } from '$lib/http/request';
 import type { Components } from './components';
 import HttpEditor from '$lib/components/HttpEditor/HttpEditor.svelte';
-import { type RequestResponsePair } from './request';
+import { type RequestResponsePair } from '$lib/http/request';
 
 interface RequestInRepeater {
 	id: number;
@@ -30,7 +30,7 @@ class RequestInRepeaters {
 			};
 			this.components.push({
 				component: HttpEditor,
-				props: { pair: pair },
+				props: { pair: pair, sendable: true },
 				name: this.next_id.toString()
 			});
 

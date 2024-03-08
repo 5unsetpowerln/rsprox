@@ -1,21 +1,16 @@
 <script lang="ts">
-	import { Request } from '$lib/request';
-	import {
-		ComboBox,
-		ContextMenu,
-		ContextMenuDivider,
-		ContextMenuGroup,
-		ContextMenuOption,
-		Select,
-		SelectItem,
-		TextInput
-	} from 'carbon-components-svelte';
+	import { Request } from '$lib/http/request';
+	import { Response } from '$lib/http/response';
+	import { Button, ComboBox, TextInput } from 'carbon-components-svelte';
 	import HeaderEditor from './HeaderEditor.svelte';
 	import BodyEditor from './BodyEditor.svelte';
-	import { charset_options } from '$lib/body';
+	import { charset_options } from '$lib/http/body';
+	import { print_errors } from '$lib/error';
 
 	export let request: Request;
 	export let readonly: boolean = false;
+	export let received_response: Response | undefined = undefined;
+	export let sendable: boolean = false;
 
 	let headers = request.get_headers();
 	let version = request.get_version();
@@ -24,39 +19,30 @@
 	let body = request.get_body();
 	let content_extension = headers.content_extension();
 	let selected_charset_id = '0';
+
+	const send_request = async () => {
+		const send_result = await request.send();
+		if (send_result.Err !== undefined) {
+			print_errors(send_result.Err);
+		}
+
+		received_response = send_result.Ok;
+	};
 </script>
 
 {#if request !== undefined}
-	<!-- <ContextMenu>
-		<ContextMenuOption indented labelText="Copy" shortcutText="⌘C" />
-		<ContextMenuOption indented labelText="Cut" shortcutText="⌘X" />
-		<ContextMenuDivider />
-		<ContextMenuOption indented labelText="Export as">
-			<ContextMenuGroup labelText="Export options">
-				<ContextMenuOption id="pdf" labelText="PDF" />
-				<ContextMenuOption id="txt" labelText="TXT" />
-				<ContextMenuOption id="mp3" labelText="MP3" />
-			</ContextMenuGroup>
-		</ContextMenuOption>
-		<ContextMenuDivider />
-		<ContextMenuOption selectable labelText="Remove metadata" />
-		<ContextMenuDivider />
-		<ContextMenuGroup labelText="Style options">
-			<ContextMenuOption id="0" labelText="Font smoothing" selected />
-			<ContextMenuOption id="1" labelText="Reduce noise" />
-			<ContextMenuOption id="2" labelText="Auto-sharpen" />
-		</ContextMenuGroup>
-		<ContextMenuDivider />
-		<ContextMenuOption indented kind="danger" labelText="Delete" />
-	</ContextMenu> -->
-
 	<div class="root">
 		<div class="top">
 			<TextInput readonly hideLabel size="sm" value={version} />
 			<ComboBox size="sm" selectedId="0" items={[{ id: '0', text: method }]} />
 			<ComboBox size="sm" bind:selectedId={selected_charset_id} items={charset_options} />
 		</div>
-		<TextInput hideLabel value={uri} size="sm" />
+		<div class="uri">
+			<TextInput hideLabel value={uri} size="sm" />
+			{#if sendable}
+				<Button size="small" on:click={send_request}>send</Button>
+			{/if}
+		</div>
 		<HeaderEditor {headers} />
 		<BodyEditor
 			{body}
@@ -68,12 +54,17 @@
 {/if}
 
 <style lang="scss">
-	.top {
-		display: grid;
-		grid-template-columns: 33% 33% 34%;
-	}
-
 	.root {
-		overflow: scroll;
+		/* overflow: scroll; */
+
+		.top {
+			display: grid;
+			grid-template-columns: 33% 33% 34%;
+		}
+
+		.uri {
+			display: grid;
+			grid-template-columns: calc(100% - 100px) 100px;
+		}
 	}
 </style>

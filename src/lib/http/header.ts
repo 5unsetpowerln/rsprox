@@ -5,15 +5,17 @@ export interface Header {
 	value_raw: Uint8Array;
 }
 
-export class Headers {
-	private array: Array<Header>;
+export type HeadersToInteractWithBackend = Array<Header>;
 
-	constructor(array: Array<Header>) {
-		this.array = array;
+export class Headers {
+	private headers_to_interact_with_backend: HeadersToInteractWithBackend;
+
+	constructor(headers_to_interact_with_backend: HeadersToInteractWithBackend) {
+		this.headers_to_interact_with_backend = headers_to_interact_with_backend;
 	}
 
 	public find_by_name(name: string) {
-		return this.array.find((header) => header.name === name);
+		return this.headers_to_interact_with_backend.find((header) => header.name === name);
 	}
 
 	// detect content extension from content-type.
@@ -36,19 +38,12 @@ export class Headers {
 	}
 
 	public get_array() {
-		return this.array;
+		return this.headers_to_interact_with_backend;
+	}
+
+	public get_headers_to_interact_with_backend(): HeadersToInteractWithBackend {
+		return this.headers_to_interact_with_backend;
 	}
 }
 
 export type ContentExtension = 'html' | 'javascript' | 'json';
-
-export function searach_header(headers: Header[], name: string) {
-	for (const header of headers) {
-		if (header.name === name) {
-			return {
-				str: header.value,
-				raw: header.value_raw
-			};
-		}
-	}
-}

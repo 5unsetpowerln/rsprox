@@ -1,7 +1,11 @@
 import { listen } from '@tauri-apps/api/event';
 import { writable, type Writable } from 'svelte/store';
-import { Request, type RequestFromBackend, type RequestResponsePair } from '$lib/request';
-import { Response, type ResponseFromBackend } from '$lib/response';
+import {
+	Request,
+	type RequestToInteractWithBackend,
+	type RequestResponsePair
+} from '$lib/http/request';
+import { Response, type ResponseToInteractWithBackend } from '$lib/http/response';
 
 export interface SmallHistoryEntry {
 	id: number;
@@ -57,7 +61,8 @@ export function get_small_history_header(a_small_history_entry: SmallHistoryEntr
 export async function proxy_start() {
 	await listen<string>('proxy_send_request_to_frontend', (data_from_backend) => {
 		const request_from_backend_json = data_from_backend.payload;
-		const request_from_backend: RequestFromBackend = JSON.parse(request_from_backend_json);
+		const request_from_backend: RequestToInteractWithBackend =
+			JSON.parse(request_from_backend_json);
 		const request = new Request(request_from_backend);
 
 		history.update((current_history) => {
@@ -72,7 +77,9 @@ export async function proxy_start() {
 
 	await listen<string>('proxy_send_response_to_frontend', (data_from_backend) => {
 		const response_from_backend_json = data_from_backend.payload;
-		const response_from_backend: ResponseFromBackend = JSON.parse(response_from_backend_json);
+		const response_from_backend: ResponseToInteractWithBackend = JSON.parse(
+			response_from_backend_json
+		);
 		const response = new Response(response_from_backend);
 
 		history.update((current_history) => {

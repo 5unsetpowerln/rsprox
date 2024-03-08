@@ -7,5 +7,4 @@
 
 {#key $requests}
 	<Tabs components={requests_in_repeater.get_components()} />
-	<!-- <svelte:component /> -->
 {/key}
