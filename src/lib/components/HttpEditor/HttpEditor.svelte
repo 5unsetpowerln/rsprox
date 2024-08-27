@@ -47,13 +47,13 @@
 			{/key}
 		</Pane>
 		<Pane size={50}>
-			<!-- {#key response} -->
-			{#if response !== undefined}
-				<div class="response">
-					<ResponseEditor {readonly} {response} />
-				</div>
-			{/if}
-			<!-- {/key response} -->
+			{#key response}
+				{#if response !== undefined}
+					<div class="response">
+						<ResponseEditor {readonly} {response} />
+					</div>
+				{/if}
+			{/key}
 		</Pane>
 	</Splitpanes>
 </div>

@@ -14,12 +14,12 @@ export interface RequestToInteractWithBackend {
 }
 
 export class Request {
-	private id: number;
-	private headers: Headers;
-	private uri: string;
-	private method: string;
-	private version: string;
-	private body: Body;
+	public id: number;
+	public headers: Headers;
+	public uri: string;
+	public method: string;
+	public version: string;
+	public body: Body;
 
 	constructor(request_from_backend: RequestToInteractWithBackend) {
 		this.id = request_from_backend.id;

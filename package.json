@@ -16,6 +16,7 @@
 		"test:unit": "vitest"
 	},
 	"devDependencies": {
+		"@codemirror/lang-css": "^6.2.1",
 		"@codemirror/lang-html": "^6.4.9",
 		"@codemirror/lang-javascript": "^6.2.2",
 		"@codemirror/lang-json": "^6.0.1",

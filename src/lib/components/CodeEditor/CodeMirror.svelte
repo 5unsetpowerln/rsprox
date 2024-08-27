@@ -1,140 +1,143 @@
 <!-- The code below is released under public domain. -->
 
 <script context="module">
-import { EditorView, minimalSetup, basicSetup } from 'codemirror'
-import { ViewPlugin } from '@codemirror/view'
-import { StateEffect } from '@codemirror/state'
-export { minimalSetup, basicSetup }
+	import { EditorView, minimalSetup, basicSetup } from 'codemirror';
+	import { ViewPlugin } from '@codemirror/view';
+	import { StateEffect } from '@codemirror/state';
+	export { minimalSetup, basicSetup };
 </script>
 
 <script>
-import { onMount, onDestroy, createEventDispatcher } from 'svelte'
-const dispatch = createEventDispatcher()
+	import { onMount, onDestroy, createEventDispatcher } from 'svelte';
+	const dispatch = createEventDispatcher();
 
-let dom
+	let dom;
 
-let _mounted = false
-onMount(() => {
-  _mounted = true
-  return () => { _mounted = false }
-})
+	let _mounted = false;
+	onMount(() => {
+		_mounted = true;
+		return () => {
+			_mounted = false;
+		};
+	});
 
-export let view = null
+	export let view = null;
 
-/* `doc` is deliberately made non-reactive for not storing a reduntant string
+	/* `doc` is deliberately made non-reactive for not storing a reduntant string
    besides the editor. Also, setting doc to undefined will not trigger an
    update, so that you can clear it after setting one. */
-export let doc
+	export let doc;
 
-/* Set this if you would like to listen to all transactions via `update` event. */
-export let verbose = false
+	/* Set this if you would like to listen to all transactions via `update` event. */
+	export let verbose = false;
 
-/* Cached doc string so that we don't extract strings in bulk over and over. */
-let _docCached = null
+	export let style = '';
 
-/* Overwrite the bulk of the text with the one specified. */
-function _setText(text) {
-  view.dispatch({
-    changes: {from: 0, to: view.state.doc.length, insert: text},
-  })
-}
+	/* Cached doc string so that we don't extract strings in bulk over and over. */
+	let _docCached = null;
 
-const subscribers = new Set()
+	/* Overwrite the bulk of the text with the one specified. */
+	function _setText(text) {
+		view.dispatch({
+			changes: { from: 0, to: view.state.doc.length, insert: text }
+		});
+	}
 
-/* And here comes the reactivity, implemented as a r/w store. */
-export const docStore = {
-  ready: () => (view !== null),
-  subscribe(cb) {
-    subscribers.add(cb)
+	const subscribers = new Set();
 
-    if (!this.ready()) {
-      cb(null)
-    } else {
-      if (_docCached == null) {
-        _docCached = view.state.doc.toString()
-      }
-      cb(_docCached)
-    }
+	/* And here comes the reactivity, implemented as a r/w store. */
+	export const docStore = {
+		ready: () => view !== null,
+		subscribe(cb) {
+			subscribers.add(cb);
 
-    return () => void subscribers.delete(cb)
-  },
-  set(newValue) {
-    if (!_mounted) {
-      throw new Error('Cannot set docStore when the component is not mounted.')
-    }
+			if (!this.ready()) {
+				cb(null);
+			} else {
+				if (_docCached == null) {
+					_docCached = view.state.doc.toString();
+				}
+				cb(_docCached);
+			}
 
-    const inited = _initEditorView(newValue)
-    if (!inited) _setText(newValue)
-  },
-}
+			return () => void subscribers.delete(cb);
+		},
+		set(newValue) {
+			if (!_mounted) {
+				throw new Error('Cannot set docStore when the component is not mounted.');
+			}
 
-export let extensions = minimalSetup
+			const inited = _initEditorView(newValue);
+			if (!inited) _setText(newValue);
+		}
+	};
 
-function _reconfigureExtensions() {
-  if (view === null) return
-  view.dispatch({
-    effects: StateEffect.reconfigure.of(extensions),
-  })
-}
+	export let extensions = minimalSetup;
 
-$: extensions, _reconfigureExtensions()
+	function _reconfigureExtensions() {
+		if (view === null) return;
+		view.dispatch({
+			effects: StateEffect.reconfigure.of(extensions)
+		});
+	}
 
-function _editorTxHandler(trs, view) {
-  view.update(trs)
+	$: extensions, _reconfigureExtensions();
 
-  if (verbose) {
-    dispatch('update', trs)
-  }
+	function _editorTxHandler(trs, view) {
+		view.update(trs);
 
-	let lastChangingTr
-  if (lastChangingTr = trs.findLast(tr => tr.docChanged)) {
-    _docCached = null
-    if (subscribers.size) {
-      dispatchDocStore(_docCached = lastChangingTr.newDoc.toString())
-    }
-    dispatch('change', {view, trs})
-  }
-}
+		if (verbose) {
+			dispatch('update', trs);
+		}
 
-function dispatchDocStore(s) {
-  for (const cb of subscribers) {
-    cb(s)
-  }
-}
+		let lastChangingTr;
+		if ((lastChangingTr = trs.findLast((tr) => tr.docChanged))) {
+			_docCached = null;
+			if (subscribers.size) {
+				dispatchDocStore((_docCached = lastChangingTr.newDoc.toString()));
+			}
+			dispatch('change', { view, trs });
+		}
+	}
 
-// the view will be inited with the either doc (as long as that it is not `undefined`)
-// or the value in docStore once set
-function _initEditorView(initialDoc) {
-  if (view !== null) {
-    return false
-  }
+	function dispatchDocStore(s) {
+		for (const cb of subscribers) {
+			cb(s);
+		}
+	}
 
-  view = new EditorView({
-    doc: initialDoc,
-    extensions,
-    parent: dom,
-    dispatchTransactions: _editorTxHandler,
-  })
-  return true
-}
+	// the view will be inited with the either doc (as long as that it is not `undefined`)
+	// or the value in docStore once set
+	function _initEditorView(initialDoc) {
+		if (view !== null) {
+			return false;
+		}
 
-$: if (_mounted && doc !== undefined) {
-  const inited = _initEditorView(doc)
-  dispatchDocStore(doc)
-}
+		view = new EditorView({
+			doc: initialDoc,
+			extensions,
+			parent: dom,
+			dispatchTransactions: _editorTxHandler
+		});
+		return true;
+	}
 
-onDestroy(() => {
-  if (view !== null) {
-    view.destroy()
-  }
-})
+	$: if (_mounted && doc !== undefined) {
+		const inited = _initEditorView(doc);
+		dispatchDocStore(doc);
+	}
+
+	onDestroy(() => {
+		if (view !== null) {
+			view.destroy();
+		}
+	});
 </script>
 
-<div class="codemirror" bind:this={dom}>
-</div>
+<div class="codemirror" bind:this={dom}></div>
 
 <style>
-.codemirror {
-  display: contents;
-}
+	.codemirror {
+		display: contents;
+	}
 </style>

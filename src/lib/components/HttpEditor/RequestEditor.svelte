@@ -15,7 +15,6 @@
 	let headers = request.get_headers();
 	let version = request.get_version();
 	let method = request.get_method();
-	let uri = request.get_uri();
 	let body = request.get_body();
 	let content_extension = headers.content_extension();
 	let selected_charset_id = '0';
@@ -32,18 +31,22 @@
 
 {#if request !== undefined}
 	<div class="root">
-		<div class="top">
-			<TextInput readonly hideLabel size="sm" value={version} />
-			<ComboBox size="sm" selectedId="0" items={[{ id: '0', text: method }]} />
-			<ComboBox size="sm" bind:selectedId={selected_charset_id} items={charset_options} />
+		<div class="header">
+			<div class="top">
+				<TextInput readonly hideLabel size="sm" value={version} />
+				<ComboBox size="sm" selectedId="0" items={[{ id: '0', text: method }]} />
+				<ComboBox size="sm" bind:selectedId={selected_charset_id} items={charset_options} />
+			</div>
+			<div class="uri">
+				<TextInput hideLabel bind:value={request.uri} size="sm" />
+				{#if sendable}
+					<Button size="small" on:click={send_request}>Send</Button>
+				{:else}
+					<Button size="small" disabled on:click={send_request}>Send</Button>
+				{/if}
+			</div>
+			<HeaderEditor {headers} />
 		</div>
-		<div class="uri">
-			<TextInput hideLabel value={uri} size="sm" />
-			{#if sendable}
-				<Button size="small" on:click={send_request}>send</Button>
-			{/if}
-		</div>
-		<HeaderEditor {headers} />
 		<BodyEditor
 			{body}
 			{content_extension}
@@ -56,15 +59,16 @@
 <style lang="scss">
 	.root {
 		/* overflow: scroll; */
+		.header {
+			.top {
+				display: grid;
+				grid-template-columns: 33% 33% 34%;
+			}
 
-		.top {
-			display: grid;
-			grid-template-columns: 33% 33% 34%;
-		}
-
-		.uri {
-			display: grid;
-			grid-template-columns: calc(100% - 100px) 100px;
+			.uri {
+				display: grid;
+				grid-template-columns: calc(100% - 100px) 100px;
+			}
 		}
 	}
 </style>

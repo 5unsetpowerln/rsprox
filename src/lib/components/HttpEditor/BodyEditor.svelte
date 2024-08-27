@@ -8,6 +8,7 @@
 	export let content_extension: ContentExtension | undefined = undefined;
 	export let readonly: boolean = false;
 	export let charset: Charset | undefined;
+	// export let style = 'overflow: scroll;';
 
 	let content: string;
 	onMount(() => {

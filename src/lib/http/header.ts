@@ -34,6 +34,8 @@ export class Headers {
 			return 'javascript';
 		} else if (extension.includes('json')) {
 			return 'json';
+		} else if (extension.includes('css')) {
+			return 'css';
 		}
 	}
 
@@ -46,4 +48,4 @@ export class Headers {
 	}
 }
 
-export type ContentExtension = 'html' | 'javascript' | 'json';
+export type ContentExtension = 'html' | 'javascript' | 'json' | 'css';
