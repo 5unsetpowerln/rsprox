@@ -8,7 +8,7 @@ export const charset_options: Array<{ id: string; text: Charset }> = [
 export interface BodyToInteractWithBackend {
 	charset: Charset;
 	str: string;
-	raw: Uint8Array;
+	raw: Array<number>;
 }
 
 export class Body {
@@ -22,12 +22,24 @@ export class Body {
 		return this.body_to_interact_with_backend.str;
 	}
 
-	public get_raw(): Uint8Array {
+	public set_str(str: string) {
+		this.body_to_interact_with_backend.str = str;
+	}
+
+	public get_raw(): Array<number> {
 		return this.body_to_interact_with_backend.raw;
+	}
+
+	public set_raw(data: Array<number>) {
+		this.body_to_interact_with_backend.raw = data;
 	}
 
 	public get_charset(): Charset {
 		return this.body_to_interact_with_backend.charset;
+	}
+
+	public set_charset(charset: Charset) {
+		this.body_to_interact_with_backend.charset = charset;
 	}
 
 	public get_length(): number {

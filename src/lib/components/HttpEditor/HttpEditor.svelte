@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { Splitpanes, Pane } from '$lib/components/Splitpanes';
 	import type { RequestResponsePair, Request } from '$lib/http/request';
-	import { ContextMenu, ContextMenuOption } from 'carbon-components-svelte';
+	import { ContextMenu, ContextMenuOption, Tile } from 'carbon-components-svelte';
 	import RequestEditor from './RequestEditor.svelte';
 	import ResponseEditor from './ResponseEditor.svelte';
 	import type { Response } from '$lib/http/response';
 	import { requests_in_repeater } from '$lib/repeater';
 
 	export let readonly: boolean = false;
-	// export let send_handler: SendHandler | undefined = undefined;
 	export let pair: RequestResponsePair;
 	export let sendable: boolean = false;
+	export let border_top: boolean = false;
 
 	let request: Request | undefined = pair?.request;
 	let response: Response | undefined = pair?.response;
@@ -20,7 +20,7 @@
 
 	function send_request_to_repeater() {
 		if (request !== undefined) {
-			requests_in_repeater.add(request);
+			requests_in_repeater.add(request.clone());
 		}
 	}
 </script>
@@ -31,28 +31,30 @@
 	</ContextMenu>
 {/if}
 
-<div class="HttpEditor">
+<div class="HttpEditor" style={!border_top ? '' : 'border-top: solid 4px gray;'}>
 	<Splitpanes style="height: 100%;">
 		<Pane size={50}>
 			{#key request}
-				{#if request !== undefined}
-					<div bind:this={request_div} class="request">
+				<div bind:this={request_div} class="request">
+					{#if request !== undefined}
 						{#if sendable}
 							<RequestEditor {readonly} {request} {sendable} bind:received_response={response} />
 						{:else}
 							<RequestEditor {readonly} {request} {sendable} />
 						{/if}
-					</div>
-				{/if}
+					{/if}
+				</div>
 			{/key}
 		</Pane>
 		<Pane size={50}>
 			{#key response}
-				{#if response !== undefined}
-					<div class="response">
+				<div class="response">
+					{#if response !== undefined}
 						<ResponseEditor {readonly} {response} />
-					</div>
-				{/if}
+					{:else}
+						<Tile style="height: 100%;" />
+					{/if}
+				</div>
 			{/key}
 		</Pane>
 	</Splitpanes>

@@ -16,16 +16,9 @@
 </script>
 
 {#key $tab_height_store}
-	<Tabs type="container">
+	<Tabs type="container" class="">
 		{#each components as component}
-			<!-- {#if index === 0} -->
 			<Tab label={component.name} bind:ref={tab_element} />
-			<!-- {:else} -->
-			<!-- <Tab label={component.name} /> -->
-			<!-- {/if} -->
-			<!-- {#if deletable} -->
-			<!-- <span class="delete_button"></span> -->
-			<!-- {/if} -->
 		{/each}
 		<svelte:fragment slot="content">
 			{#each components as component}

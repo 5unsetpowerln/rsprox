@@ -2,7 +2,7 @@ export interface Header {
 	id: number;
 	name: string;
 	value: string;
-	value_raw: Uint8Array;
+	value_raw: Array<number>;
 }
 
 export type HeadersToInteractWithBackend = Array<Header>;
@@ -39,8 +39,10 @@ export class Headers {
 		}
 	}
 
-	public get_array() {
-		return this.headers_to_interact_with_backend;
+	public set_headers_to_interact_with_backend(
+		headers_to_interact_with_backend: HeadersToInteractWithBackend
+	) {
+		this.headers_to_interact_with_backend = headers_to_interact_with_backend;
 	}
 
 	public get_headers_to_interact_with_backend(): HeadersToInteractWithBackend {

@@ -30,7 +30,7 @@ class RequestInRepeaters {
 			};
 			this.components.push({
 				component: HttpEditor,
-				props: { pair: pair, sendable: true },
+				props: { pair: pair, sendable: true, border_top: true },
 				name: this.next_id.toString()
 			});
 

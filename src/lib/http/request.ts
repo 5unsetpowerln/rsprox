@@ -1,6 +1,8 @@
 import { Ok, Err, type Result } from '$lib/error';
+import cloneDeep from 'lodash/cloneDeep';
 import { Body, type BodyToInteractWithBackend } from './body';
 import { Headers, type HeadersToInteractWithBackend } from './header';
+import type { Method } from './method';
 import { Response, type ResponseToInteractWithBackend } from './response';
 import { invoke } from '@tauri-apps/api/tauri';
 
@@ -8,18 +10,18 @@ export interface RequestToInteractWithBackend {
 	id: number;
 	headers: HeadersToInteractWithBackend;
 	uri: string;
-	method: string;
+	method: Method;
 	version: string;
 	body: BodyToInteractWithBackend;
 }
 
 export class Request {
-	public id: number;
-	public headers: Headers;
-	public uri: string;
-	public method: string;
-	public version: string;
-	public body: Body;
+	private id: number;
+	private headers: Headers;
+	private uri: string;
+	private method: Method;
+	private version: string;
+	private body: Body;
 
 	constructor(request_from_backend: RequestToInteractWithBackend) {
 		this.id = request_from_backend.id;
@@ -28,30 +30,6 @@ export class Request {
 		this.method = request_from_backend.method;
 		this.version = request_from_backend.version;
 		this.body = new Body(request_from_backend.body);
-	}
-
-	public get_id(): number {
-		return this.id;
-	}
-
-	public get_method(): string {
-		return this.method;
-	}
-
-	public get_uri(): string {
-		return this.uri;
-	}
-
-	public get_headers(): Headers {
-		return this.headers;
-	}
-
-	public get_version(): string {
-		return this.version;
-	}
-
-	public get_body(): Body {
-		return this.body;
 	}
 
 	public async send(): Promise<Result<Response>> {
@@ -81,6 +59,58 @@ export class Request {
 		const response = new Response(response_from_backend);
 
 		return Ok(response);
+	}
+
+	public clone() {
+		return cloneDeep(this);
+	}
+
+	public get_id() {
+		return this.id;
+	}
+
+	public set_id(id: number) {
+		this.id = id;
+	}
+
+	public get_uri() {
+		return this.uri;
+	}
+
+	public set_uri(uri: string) {
+		this.uri = uri;
+	}
+
+	public get_headers() {
+		return this.headers;
+	}
+
+	public set_headers(headers: Headers) {
+		this.headers = headers;
+	}
+
+	public get_method() {
+		return this.method;
+	}
+
+	public set_method(method: Method) {
+		this.method = method;
+	}
+
+	public get_version() {
+		return this.version;
+	}
+
+	public set_version(version: string) {
+		this.version = version;
+	}
+
+	public get_body() {
+		return this.body;
+	}
+
+	public set_body(body: Body) {
+		this.body = body;
 	}
 }
 export type SendHandler = (request: Request) => Promise<void>;

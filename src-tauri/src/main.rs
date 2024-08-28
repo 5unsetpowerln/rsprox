@@ -73,6 +73,12 @@ fn error_to_chain(top_err: anyhow::Error) -> ErrorChainVector {
 async fn tauri_cmd_send_request(request_json: String) -> ResultToInteractWithFrontend<String> {
     type Result<T> = ResultToInteractWithFrontend<T>;
 
+    println!(
+        "{:#}",
+        serde_json::from_str::<serde_json::Value>(&request_json).unwrap()
+    );
+    println!("##################################################");
+
     let request_from_frontend =
         match serde_json::from_str::<RequestToInteractWithFrontend>(&request_json)
             .context("Failed to parse string from frontend as request")

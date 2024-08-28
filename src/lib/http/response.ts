@@ -10,11 +10,11 @@ export interface ResponseToInteractWithBackend {
 }
 
 export class Response {
-	private id: number;
-	private headers: Headers;
-	private status: number;
-	private version: string;
-	private body: Body;
+	public id: number;
+	public headers: Headers;
+	public status: number;
+	public version: string;
+	public body: Body;
 
 	constructor(response_from_backend: ResponseToInteractWithBackend) {
 		this.id = response_from_backend.id;

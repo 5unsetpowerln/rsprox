@@ -32,6 +32,21 @@
 				break;
 		}
 	});
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const update_code = (new_code_: any) => {
+		const new_code = new_code_[0];
+		if (typeof new_code === 'string') {
+			code = new_code;
+		}
+	};
 </script>
 
-<CodeMirror doc={code} {extensions}></CodeMirror>
+<CodeMirror
+	doc={code}
+	{extensions}
+	verbose
+	on:update={(event) => {
+		update_code(event.detail[0]._doc.text);
+	}}
+></CodeMirror>

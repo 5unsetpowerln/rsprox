@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use http::header::CONTENT_ENCODING;
-use hyper::{Body, HeaderMap, Method, Request, Uri, Version};
+use hyper::{Body, HeaderMap, Request, Uri, Version};
 use hyper_tls::HttpsConnector;
 use serde::{Deserialize, Serialize};
 use std::str::{self, FromStr};
@@ -8,13 +8,14 @@ use std::str::{self, FromStr};
 use super::body::{clone_body, decode_body, BodyForFrontend};
 use super::compression::CompressionEncoding;
 use super::headers::{Header, HeaderMapUtil, VersionUtil};
+use super::method::Method;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct RequestToInteractWithFrontend {
     id: usize,
     headers: Vec<Header>,
     uri: String,
-    method: String,
+    method: Method,
     version: String,
     body: BodyForFrontend,
 }
@@ -29,7 +30,7 @@ impl RequestToInteractWithFrontend {
             .context("Failed to create a vector from the headers")?;
 
         let uri_string = parts.uri.to_string();
-        let method_string = parts.method.to_string();
+        let method = Method::from_hyper(parts.method);
         let version_string = parts.version.to_string().unwrap();
 
         let encoding_header = parts.headers.get(CONTENT_ENCODING);
@@ -45,7 +46,7 @@ impl RequestToInteractWithFrontend {
             id,
             headers: headers_vec,
             uri: uri_string,
-            method: method_string,
+            method,
             version: version_string,
             body: decoded_body,
         })
@@ -54,7 +55,7 @@ impl RequestToInteractWithFrontend {
     pub async fn to_hyper(self) -> Result<Request<Body>> {
         let headers = HeaderMap::from_header_vector(self.headers).unwrap();
         let uri = self.uri.parse::<Uri>().unwrap();
-        let method = Method::from_str(&self.method).unwrap();
+        let method = self.method.to_hyper();
         let version = Version::from_str(&self.version).unwrap();
 
         let encoding_header = headers.get(CONTENT_ENCODING);
